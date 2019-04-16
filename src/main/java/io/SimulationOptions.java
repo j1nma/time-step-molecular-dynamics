@@ -17,48 +17,59 @@ public class SimulationOptions extends OptionsBase {
 	public boolean help;
 
 	@Option(
-			name = "staticFile",
-			abbrev = 's',
-			help = "Path to static file.",
-			category = "startup",
-			defaultValue = "/"
-	)
-	public String staticFile;
-
-	@Option(
-			name = "dynamicFile",
-			abbrev = 'd',
-			help = "Path to dynamic file.",
-			category = "startup",
-			defaultValue = "/"
-	)
-	public String dynamicFile;
-
-	@Option(
-			name = "boxSize",
-			abbrev = 'l',
-			help = "Size of box.",
-			category = "startup",
-			defaultValue = "0.5"
-	)
-	public double boxSize;
-
-	@Option(
-			name = "time",
+			name = "limitTime",
 			abbrev = 't',
-			help = "Maximum time of simulation.",
+			help = "Maximum time of simulation (s).",
 			category = "startup",
-			defaultValue = "60.0"
+			defaultValue = "5.0"
 	)
-	public double time;
+	public double limitTime;
 
 	@Option(
-			name = "maxEvents",
-			abbrev = 'e',
-			help = "Maximum number of events.",
+			name = "mass",
+			abbrev = 'm',
+			help = "Particle mass (kg).",
 			category = "startup",
-			defaultValue = "10000000"
+			defaultValue = "70"
 	)
-	public int maxEvents;
+	public double mass;
+
+	@Option(
+			name = "stiffness",
+			abbrev = 'k',
+			help = "Stiffness (N/m).",
+			category = "startup",
+			defaultValue = "10000"
+	)
+	public double k;
+
+	@Option(
+			name = "vdc",
+			abbrev = 'k',
+			help = "Viscous damping coefficient (kg/s).",
+			category = "startup",
+			defaultValue = "100"
+	)
+	public double vdc;
+
+	@Option(
+			name = "initialPosition",
+			abbrev = 'p',
+			help = "Initial position at t=0 (m).",
+			category = "startup",
+			defaultValue = "1.0"
+	)
+	public double initialPosition;
+
+
+	//TODO: WHAT ABOUT A in  - A 𝛾/(2m) ?
+	@Option(
+			name = "initialVelocity",
+			abbrev = 'v',
+			help = "Initial velocity at t=0 (m/s).",
+			category = "startup",
+			defaultValue = "1.0"
+	)
+	public double initialVelocity;
 
 }

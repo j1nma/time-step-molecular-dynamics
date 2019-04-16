@@ -1,14 +1,15 @@
 import algorithms.TimeStepMolecularDynamics;
 import com.google.devtools.common.options.OptionsParser;
 import io.OvitoWriter;
+import io.SimulationOptions;
 import models.Particle;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.List;
 
 public class App {
 
@@ -24,61 +25,55 @@ public class App {
 		new File(OUTPUT_DIRECTORY).mkdirs();
 		new File(COLLISION_DIRECTORY).mkdirs();
 
-//		// Parse command line options
-//		OptionsParser parser = OptionsParser.newOptionsParser(SimulationOptions.class);
-//		parser.parseAndExitUponError(args);
-//		SimulationOptions options = parser.getOptions(SimulationOptions.class);
-//		assert options != null;
-//		if (options.time <= 0
-//				|| options.maxEvents <= 0
-//				|| options.boxSize <= 0
-//				|| options.staticFile.isEmpty()
-//				|| options.dynamicFile.isEmpty()) {
-//			printUsage(parser);
-//		}
-//
-//		// Parse static and dynamic files
-//		Parser staticAndDynamicParser = new Parser(options.staticFile, options.dynamicFile);
-//		if (!staticAndDynamicParser.parse()) return;
-//		List<Particle> particles = staticAndDynamicParser.getParticles();
-//
-//		// Initialize file writers
-//		eventWriter = new PrintWriter(new FileWriter(COLLISION_FREQUENCY_FILE));
-//
-//		// Run algorithm
-//		runAlgorithm(
-//				particles,
-//				options.boxSize,
-//				options.time,
-//				options.maxEvents
-//		);
+		// Parse command line options
+		OptionsParser parser = OptionsParser.newOptionsParser(SimulationOptions.class);
+		parser.parseAndExitUponError(args);
+		SimulationOptions options = parser.getOptions(SimulationOptions.class);
+		assert options != null;
+		if (options.limitTime <= 0
+				|| options.mass <= 0) {
+			printUsage(parser);
+		}
+
+		// Initialize file writers
+		eventWriter = new PrintWriter(new FileWriter(COLLISION_FREQUENCY_FILE));
+
+		// Run algorithm
+		runAlgorithm(
+				options.limitTime,
+				options.k,
+				options.vdc,
+				options.initialPosition,
+				options.initialVelocity
+		);
 	}
 
-	private static void runAlgorithm(List<Particle> particles,
-	                                 double L,
-	                                 double limitTime,
-	                                 int maxEvents) {
+	private static void runAlgorithm(double limitTime,
+	                                 double k,
+	                                 double vdc,
+	                                 double initialPosition,
+	                                 double initialVelocity) {
 
 		StringBuffer buffer = new StringBuffer();
 		long startTime = System.currentTimeMillis();
 
 		// Print temperature (constant over time)
-		System.out.println("Temperature (K):\t" + TimeStepMolecularDynamics.calculateTemperature(particles));
+//		System.out.println("Temperature (K):\t" + TimeStepMolecularDynamics.calculateTemperature(particles));
 
-		TimeStepMolecularDynamics.run(
-				particles,
-				L,
-				limitTime,
-				maxEvents,
-				buffer,
-				eventWriter
-		);
+//		TimeStepMolecularDynamics.run(
+//				particles,
+//				L,
+//				limitTime,
+//				maxEvents,
+//				buffer,
+//				eventWriter
+//		);
 
 		long stopTime = System.currentTimeMillis();
 		long elapsedTime = stopTime - startTime;
 
 		System.out.println("======================== Results ========================");
-		System.out.println("Event Driven Molecular Dynamics execution time (ms):\t" + elapsedTime);
+		System.out.println("Event Driven Molecular Dynamics execution limitTime (ms):\t" + elapsedTime);
 
 		OvitoWriter<Particle> ovitoWriter;
 		try {
