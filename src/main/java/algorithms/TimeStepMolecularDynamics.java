@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- * Brownian motion implementation
+ * TODO {something here} implementation
  */
 public class TimeStepMolecularDynamics {
 

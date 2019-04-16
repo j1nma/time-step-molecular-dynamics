@@ -26,6 +26,24 @@ public class SimulationOptions extends OptionsBase {
 	public double limitTime;
 
 	@Option(
+			name = "deltaT",
+			abbrev = 'd',
+			help = "Simulation delta time (s).",
+			category = "startup",
+			defaultValue = "0.1"
+	)
+	public double deltaT;
+
+	@Option(
+			name = "printDeltaT",
+			abbrev = 's',
+			help = "Simulation print delta time (s).",
+			category = "startup",
+			defaultValue = "0.5"
+	)
+	public double printDeltaT;
+
+	@Option(
 			name = "mass",
 			abbrev = 'm',
 			help = "Particle mass (kg).",

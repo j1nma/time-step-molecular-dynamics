@@ -31,6 +31,8 @@ public class App {
 		SimulationOptions options = parser.getOptions(SimulationOptions.class);
 		assert options != null;
 		if (options.limitTime <= 0
+				|| options.deltaT <= 0
+				|| options.printDeltaT <= 0
 				|| options.mass <= 0) {
 			printUsage(parser);
 		}
@@ -41,6 +43,8 @@ public class App {
 		// Run algorithm
 		runAlgorithm(
 				options.limitTime,
+				options.deltaT,
+				options.printDeltaT,
 				options.k,
 				options.vdc,
 				options.initialPosition,
@@ -49,6 +53,8 @@ public class App {
 	}
 
 	private static void runAlgorithm(double limitTime,
+	                                 double deltaT,
+	                                 double printDeltaT,
 	                                 double k,
 	                                 double vdc,
 	                                 double initialPosition,
