@@ -1,3 +1,4 @@
+import algorithms.LennardJonesGas;
 import com.google.devtools.common.options.OptionsParser;
 import io.OvitoWriter;
 import io.Parser;
@@ -16,15 +17,12 @@ public class App {
 
 	private static final String OUTPUT_DIRECTORY = "./output";
 	private static final String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file.txt";
-	private static final String COLLISION_DIRECTORY = OUTPUT_DIRECTORY + "/collisionFrequency";
-	private static final String COLLISION_FREQUENCY_FILE = COLLISION_DIRECTORY + "/collision_frequency.txt";
 	private static PrintWriter eventWriter;
 
 	public static void main(String[] args) throws IOException {
 
 		// Create directories
 		new File(OUTPUT_DIRECTORY).mkdirs();
-		new File(COLLISION_DIRECTORY).mkdirs();
 
 		// Parse command line options
 		OptionsParser parser = OptionsParser.newOptionsParser(SimulationOptions.class);
@@ -46,7 +44,7 @@ public class App {
 		List<Particle> particles = staticAndDynamicParser.getParticles();
 
 		// Initialize file writers
-		eventWriter = new PrintWriter(new FileWriter(COLLISION_FREQUENCY_FILE));
+		eventWriter = new PrintWriter(new FileWriter("TODO GAS FILE")); //TODO CORRECT FILE NAME
 
 		// Run algorithm
 		runAlgorithm(
@@ -73,23 +71,24 @@ public class App {
 		StringBuffer buffer = new StringBuffer();
 		long startTime = System.currentTimeMillis();
 
-		// Print temperature (constant over time)
-//		System.out.println("Temperature (K):\t" + TimeStepMolecularDynamics.calculateTemperature(particles));
-
-//		TimeStepMolecularDynamics.run(
-//				particles,
-//				L,
-//				limitTime,
-//				maxEvents,
-//				buffer,
-//				eventWriter
-//		);
+		LennardJonesGas.run(
+				particles,
+				buffer,
+				eventWriter,
+				limitTime,
+				deltaT,
+				printDeltaT,
+				k,
+				vdc,
+				initialPosition,
+				initialVelocity
+		);
 
 		long stopTime = System.currentTimeMillis();
 		long elapsedTime = stopTime - startTime;
 
 		System.out.println("======================== Results ========================");
-		System.out.println("Time Step Molecular Dynamics execution time (ms):\t" + elapsedTime);
+		System.out.println("Lennard Jones Gas Time Step Molecular Dynamics execution time (ms):\t" + elapsedTime);
 
 		OvitoWriter<Particle> ovitoWriter;
 		try {
