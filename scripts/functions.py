@@ -6,12 +6,12 @@ import fileinput
 def is_valid_position(otherX, otherY, otherRadius, newX, newY, newRadius):
     return (power(otherX - newX, 2) + pow(otherY - newY, 2)) > pow(otherRadius + newRadius, 2)
 
-def generate_static_file(name, number_of_particles, area_length, particle_radius, particle_mass, particle_bonding_energy):
+def generate_static_file(name, number_of_particles, area_length, particle_radius, particle_mass):
     with open(name, 'w') as f:
         f.write('{}\n'.format(number_of_particles))
 
         for x in range(0, number_of_particles):
-            f.write('{} {} {}\n'.format(particle_radius, particle_mass, particle_bonding_energy))
+            f.write('{} {}\n'.format(particle_radius, particle_mass))
 
 def generate_dynamic_file(name, number_of_particles, area_length, initial_speed, particle_radius):
     with open(name, 'w') as f:
@@ -67,7 +67,7 @@ def get_area_length():
         except ValueError:
             print("Number not a float.")
 
-def generate_lennard_jones_gas_file(number_of_particles, area_length, initial_speed, particle_radius, particle_mass, particle_bonding_energy):
+def generate_lennard_jones_gas_file(number_of_particles, area_length, initial_speed, particle_radius, particle_mass):
     dirName = './data';
     if not os.path.exists(dirName):
                 os.mkdir(dirName)
@@ -76,7 +76,7 @@ def generate_lennard_jones_gas_file(number_of_particles, area_length, initial_sp
     if not os.path.exists(lennardJonesGasDirName):
                     os.mkdir(lennardJonesGasDirName)
                     print("Directory " , lennardJonesGasdirName ,  " Created ")
-    generate_static_file(lennardJonesGasDirName + '/Static-N=' + str(number_of_particles) + '.txt', number_of_particles, area_length, particle_radius, particle_mass, particle_bonding_energy)
+    generate_static_file(lennardJonesGasDirName + '/Static-N=' + str(number_of_particles) + '.txt', number_of_particles, area_length, particle_radius, particle_mass)
     generate_dynamic_file(lennardJonesGasDirName + '/Dynamic-N=' + str(number_of_particles) + '.txt', number_of_particles, area_length, initial_speed, particle_radius)
 
 
