@@ -1,6 +1,6 @@
-import algorithms.TimeStepMolecularDynamics;
 import com.google.devtools.common.options.OptionsParser;
 import io.OvitoWriter;
+import io.Parser;
 import io.SimulationOptions;
 import models.Particle;
 
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 
 public class App {
 
@@ -33,15 +34,23 @@ public class App {
 		if (options.limitTime <= 0
 				|| options.deltaT <= 0
 				|| options.printDeltaT <= 0
-				|| options.mass <= 0) {
+				|| options.mass <= 0
+				|| options.staticFile.isEmpty()
+				|| options.dynamicFile.isEmpty()) {
 			printUsage(parser);
 		}
+
+		// Parse static and dynamic files
+		Parser staticAndDynamicParser = new Parser(options.staticFile, options.dynamicFile);
+		if (!staticAndDynamicParser.parse()) return;
+		List<Particle> particles = staticAndDynamicParser.getParticles();
 
 		// Initialize file writers
 		eventWriter = new PrintWriter(new FileWriter(COLLISION_FREQUENCY_FILE));
 
 		// Run algorithm
 		runAlgorithm(
+				particles,
 				options.limitTime,
 				options.deltaT,
 				options.printDeltaT,
@@ -52,7 +61,8 @@ public class App {
 		);
 	}
 
-	private static void runAlgorithm(double limitTime,
+	private static void runAlgorithm(List<Particle> particles,
+	                                 double limitTime,
 	                                 double deltaT,
 	                                 double printDeltaT,
 	                                 double k,
@@ -79,7 +89,7 @@ public class App {
 		long elapsedTime = stopTime - startTime;
 
 		System.out.println("======================== Results ========================");
-		System.out.println("Event Driven Molecular Dynamics execution limitTime (ms):\t" + elapsedTime);
+		System.out.println("Time Step Molecular Dynamics execution time (ms):\t" + elapsedTime);
 
 		OvitoWriter<Particle> ovitoWriter;
 		try {
@@ -89,13 +99,10 @@ public class App {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println("Average time between collisions (s):\t" +
-				TimeStepMolecularDynamics.getAverageTimeBetweenCollisions());
 	}
 
 	private static void printUsage(OptionsParser parser) {
-		System.out.println("Usage: java -jar molecular-dynamics-simulation-1.0-SNAPSHOT.jar OPTIONS");
+		System.out.println("Usage: java -jar time-step-molecular-dynamics-1.0-SNAPSHOT.jar OPTIONS");
 		System.out.println(parser.describeOptions(Collections.emptyMap(),
 				OptionsParser.HelpVerbosity.LONG));
 	}

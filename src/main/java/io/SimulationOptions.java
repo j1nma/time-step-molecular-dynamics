@@ -17,6 +17,24 @@ public class SimulationOptions extends OptionsBase {
 	public boolean help;
 
 	@Option(
+			name = "staticFile",
+			abbrev = 's',
+			help = "Path to static file.",
+			category = "startup",
+			defaultValue = "/"
+	)
+	public String staticFile;
+
+	@Option(
+			name = "dynamicFile",
+			abbrev = 'd',
+			help = "Path to dynamic file.",
+			category = "startup",
+			defaultValue = "/"
+	)
+	public String dynamicFile;
+
+	@Option(
 			name = "limitTime",
 			abbrev = 't',
 			help = "Maximum time of simulation (s).",
