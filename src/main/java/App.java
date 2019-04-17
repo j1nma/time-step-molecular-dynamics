@@ -1,4 +1,4 @@
-import algorithms.LennardJonesGas;
+import algorithms.TimeStepDrivenMolecularDynamics;
 import com.google.devtools.common.options.OptionsParser;
 import io.OvitoWriter;
 import io.Parser;
@@ -71,7 +71,7 @@ public class App {
 		StringBuffer buffer = new StringBuffer();
 		long startTime = System.currentTimeMillis();
 
-		LennardJonesGas.run(
+		TimeStepDrivenMolecularDynamics.run(
 				particles,
 				buffer,
 				eventWriter,
@@ -88,7 +88,7 @@ public class App {
 		long elapsedTime = stopTime - startTime;
 
 		System.out.println("======================== Results ========================");
-		System.out.println("Lennard Jones Gas Time Step Molecular Dynamics execution time (ms):\t" + elapsedTime);
+		System.out.println("Time Step Driven Molecular Dynamics execution time (ms):\t" + elapsedTime);
 
 		OvitoWriter<Particle> ovitoWriter;
 		try {
