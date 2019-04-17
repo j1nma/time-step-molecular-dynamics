@@ -36,7 +36,7 @@ public class Parser {
 			System.out.println("Static file not found exception: " + staticFilePath);
 			return false;
 		}
-		numberOfParticles = sc.nextInt() + 1;// + 1 for large particle
+		numberOfParticles = sc.nextInt();
 		for (int i = 0; i < numberOfParticles; i++) {
 			double radius = sc.nextDouble();
 			double mass = sc.nextDouble();

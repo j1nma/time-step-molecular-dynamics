@@ -27,7 +27,7 @@ public class OctaveWriter {
 		this.fileWriter.close();
 	}
 
-	public void writeOrderValuesThroughIterations(final Stack<Double> orderValues) throws IOException {
+	public void writeOrderValuesThroughIterations(final Stack<Double> orderValues) throws IOException { //TODO adapt
 		final StringBuilder builder = new StringBuilder();
 		builder.append("result = [").append(Double.toString(orderValues.pop()));
 		while (!orderValues.isEmpty()) {
