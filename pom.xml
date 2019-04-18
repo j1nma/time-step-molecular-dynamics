@@ -31,7 +31,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>App</mainClass>
+                            <mainClass>algorithms/Order5GearPredictorCorrector</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
