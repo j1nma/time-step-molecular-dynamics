@@ -1,8 +1,5 @@
 package algorithms;
 
-import java.io.IOException;
-
-// TODO refactor name to chosen Verlet variant
 public class Verlet {
 
 	private static Double mass = 70.0; //kg
