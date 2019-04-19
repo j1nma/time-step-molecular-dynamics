@@ -12,12 +12,11 @@ public class Beeman {
 
 	// Parameters
 	private static Double time = 0.0; // s
-	private static Double dt = 0.1; // s
+	private static Double dt = 0.001; // s
 	private static Double mass = 70.0; //kg
 	private static Double Kconstant = 100000.0; // N/m
 	private static Double gamma = 100.0; // kg/s
 	private static Double maxTime = 5.0; // s
-	private static Double acceleration = 1.0; // ???
 
 	// Initial State
 	private static Double position = 1.0; // m (initial position on time=0)
