@@ -60,6 +60,6 @@ public class Beeman {
 		return velocity+ (1.0/3)*(F(Xnext, Vnext)/mass)*delta+(5.0/6)*(F(lastX,lastV)/mass)*delta-(1.0/6)*(Flast/mass)*delta;
 	}
 
-	private static Double F(Double x, Double v) { return (-Kconstant*x-gamma*v)/mass; }
+	private static Double F(Double x, Double v) { return (-Kconstant*x-gamma*v); }
 
 }
