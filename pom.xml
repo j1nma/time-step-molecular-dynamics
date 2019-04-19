@@ -31,7 +31,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>App</mainClass>
+                            <mainClass>algorithms/Verlet</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
