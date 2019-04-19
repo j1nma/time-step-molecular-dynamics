@@ -5,6 +5,8 @@ import java.util.Map;
 
 /**
  * @see "teorica4 diapo 21 y 22"
+ * @see "https://slideplayer.com/slide/11345253/ diapo 26"
+ * @see "https://www.slideshare.net/keerthanpg/integration-schemes-in-molecular-dynamics CLAVEEEEEE"
  */
 public class Order5GearPredictorCorrector {
 
@@ -47,6 +49,7 @@ public class Order5GearPredictorCorrector {
 			// STEP-2 teniendo las predicciones calculo las aceleraciones en t+deltaT
 			acceleration = 1.0; // ????
 
+
 			// STEP-3 sabiendo la probable aceleracion en t+deltaT,
 			// usamos esta para calcular de nuevo el paso uno pero con mas exactitud segun
 			// vi(t+Δt) = vi(t) + ai(t+Δt)Δt
@@ -64,6 +67,7 @@ public class Order5GearPredictorCorrector {
 
 	static Map<Double, Double> vValues = new HashMap<>();
 	static Map<Double, Double> xValues = new HashMap<>();
+	static Double cero = 0.0;
 
 
 	/**
@@ -83,8 +87,41 @@ public class Order5GearPredictorCorrector {
 	 * @return
 	 */
 	private static Double Xpredictivo(Double t, Double delta) {
+
+		return
+				Xpredictivo0(t,cero) +
+						Xpredictivo1(t,cero)*delta +
+						Xpredictivo2(t,cero)*((delta*delta)/2) +
+						Xpredictivo3(t, cero)*((delta*delta*delta)/6) +
+						Xpredictivo4(t, cero)*((delta*delta*delta*delta)/24) +
+						Xpredictivo5(t, cero)*((delta*delta*delta*delta*delta)/120)
+				;
+	}
+
+	private static Double Xpredictivo0(Double t, Double delta) {
 		return (xValues.get(t) + (vValues.get(t) *delta));
 	}
+
+	private static Double Xpredictivo1(Double t, Double delta) {
+		return (xValues.get(t) + (vValues.get(t) *delta));
+	}
+
+	private static Double Xpredictivo2(Double t, Double delta) {
+		return (xValues.get(t) + (vValues.get(t) *delta));
+	}
+
+	private static Double Xpredictivo3(Double t, Double delta) {
+		return (xValues.get(t) + (vValues.get(t) *delta));
+	}
+
+	private static Double Xpredictivo4(Double t, Double delta) {
+		return (xValues.get(t) + (vValues.get(t) *delta));
+	}
+
+	private static Double Xpredictivo5(Double t, Double delta) {
+		return (xValues.get(t) + (vValues.get(t) *delta));
+	}
+
 
 	/**
 	 * Used for step two. Correct next velocity
