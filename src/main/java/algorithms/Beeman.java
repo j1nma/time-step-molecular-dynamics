@@ -32,7 +32,6 @@ public class Beeman {
 		Flast =F(position, velocity);
 
 		while (time < maxTime) {
-			System.out.printf("Step: %d Position: %f Velocity: %f    %s\n",step++,position,velocity,velocity>=0?"-->":"    <--");
 			lastX = position;
 			// saco X
 			position = X(time, dt);
@@ -43,6 +42,7 @@ public class Beeman {
 			velocity = Vcorrector(time, dt, position, velocityPredicted);
 			Flast = F(lastX, lastV);
 
+			System.out.printf("Step: %d Position: %f Velocity: %f  Error: %e  %s\n",step++,position,velocity, Math.pow(Math.abs(realPosition(time)-position),2), velocity>=0?"-->":"    <--");
 			time+=dt;
 		}
 
@@ -62,4 +62,7 @@ public class Beeman {
 
 	private static Double F(Double x, Double v) { return (-Kconstant*x-gamma*v); }
 
+	private static double realPosition(Double time) {
+		return A * Math.exp(-(gamma/(2*mass)) * time) * Math.cos(Math.sqrt((Kconstant/mass) - (gamma*gamma / (4 * mass*mass))) * time);
+	}
 }
