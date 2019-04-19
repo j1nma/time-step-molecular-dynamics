@@ -31,7 +31,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>algorithms/Verlet</mainClass>
+                            <mainClass>algorithms/VelocityVerlet</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
