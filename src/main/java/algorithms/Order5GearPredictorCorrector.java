@@ -1,5 +1,7 @@
 package algorithms;
 
+import sun.java2d.cmm.kcms.KcmsServiceProvider;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,136 +16,60 @@ public class Order5GearPredictorCorrector {
 		run();
 	}
 
+	private static Integer step = 0;
+
+	// Parameters
+	private static Double time = 0.0; // s
+	private static Double dt = 1e-4; // s
+	private static Double mass = 70.0; //kg
+	private static Double Kconstant = 100000.0; // N/m
+	private static Double gamma = 100.0; // kg/s
+	private static Double maxTime = 5.0; // s
+	private static Double acceleration = 1.0; // ???
+
+	// Initial State
+	private static Double position = 1.0; // m (initial position on time=0)
+	private static Double A = 1.0; // ????
+	private static Double velocity = 0.0; //- A *(gamma/(2*mass)); // m/s (initial velocity on time=0)
+
 	public static void run() {
-		Integer step = 0;
 
-		// Parameters
-		Double time = 0.0; // s
-		Double dt = 0.1; // s
-		Double mass = 70.0; //kg
-		Double Kconstant = 100000.0; // N/m
-		Double lambda = 100.0; // kg/s
-		Double maxTime = 5.0; // s
-		Double acceleration = 1.0; // ???
-
-		// Initial State
-		Double position = 1.0; // m (initial position on time=0)
-		Double A = 1.0; // ????
-		Double velocity = - A *(lambda/(2*mass)); // m/s (initial velocity on time=0)
-
-		// inicializo sistema variables y preparo situacion inicial
-		// me genero el paso r(0) y v(0)
-		xValues.put(time, position);
-		vValues.put(time, velocity);
+		System.out.println();
+		System.out.println();
+		System.out.println();
 
 		while (time < maxTime) {
-			System.out.printf("Step: %d  Position: %f  Velocity: %f  Acceleration: %f\n",step++, position, velocity, acceleration);
-			// a partir del ultimo paso en el tiempo t q fue la iteracion anterior
-
-			// STEP-1  predigo la proximo velocidad  y posicion en t+deltaT
-			// vip(t+Δt) = vi(t) + ai(t)Δt
-			velocity = Vpredictivo(time, dt);
-			// rip(t+Δt) = ri(t) + vi(t)Δt
-			position = Xpredictivo(time, dt);
-
-			// STEP-2 teniendo las predicciones calculo las aceleraciones en t+deltaT
-			acceleration = 1.0; // ????
+			System.out.printf("Step: %d  Position: %e  Velocity: %f  Error2: %e Real: %e\n",step++, position, velocity, Math.pow(Math.abs(realPosition(time)-position),2), realPosition(time));
 
 
-			// STEP-3 sabiendo la probable aceleracion en t+deltaT,
-			// usamos esta para calcular de nuevo el paso uno pero con mas exactitud segun
-			// vi(t+Δt) = vi(t) + ai(t+Δt)Δt
-			velocity = Vcorrection(time, dt);
-			vValues.put(time+dt, velocity);
-			// ri(t+Δt) = ri(t) + vi(t+Δt)Δt
-			position = Xcorrection(time, dt);
-			xValues.put(time+dt, position);
-			// veamos que igual seguimos prediciondo t+deltaT
+			Double Xp2 = F(position,velocity)/mass;
+			Double Xp3 = F(velocity,Xp2)/mass;
+			Double Xp4 = F(Xp2,Xp3)/mass;
+			Double Xp5 = F(Xp3,Xp4)/mass;
 
+
+			// Predict
+			Double r0p = position + velocity * dt + Xp2 * Math.pow(dt,2) / 2 + Xp3 * Math.pow(dt,3) / 6 + Xp4 * Math.pow(dt,4) / 24 + Xp5 * Math.pow(dt,5) / 120;
+			Double r1p = velocity + Xp2 * dt + Xp3 * Math.pow(dt,2) / 2 + Xp4 * Math.pow(dt,3) / 6 + Xp5 * Math.pow(dt,4) / 24;
+			Double r2p = Xp2 + Xp3 * dt + Xp4 * Math.pow(dt,2) / 2 + Xp5 * Math.pow(dt,3) / 6;
+
+			// Estimate
+			Double dr2 = ((F(r0p, r1p)/mass) - r2p) * Math.pow(dt,2) / 2;
+
+			// Correct
+			position = r0p+(3.0/16)*dr2;
+			velocity = r1p+(251.0/360)*dr2;
 
 			time+=dt;
 		}
 	}
 
-	static Map<Double, Double> vValues = new HashMap<>();
-	static Map<Double, Double> xValues = new HashMap<>();
-	static Double cero = 0.0;
 
-
-	/**
-	 * Used for step one. Predict next velocity
-	 * @param t
-	 * @param delta
-	 * @return
-	 */
-	private static Double Vpredictivo(Double t, Double delta) {
-		return (vValues.get(t) + (A(t)*delta));
+	private static Double F(Double x, Double y) {
+		return -Kconstant*x-y*gamma;
 	}
 
-	/**
-	 * Used for step one. Predict next position
-	 * @param t
-	 * @param delta
-	 * @return
-	 */
-	private static Double Xpredictivo(Double t, Double delta) {
-
-		return
-				Xpredictivo0(t,cero) +
-						Xpredictivo1(t,cero)*delta +
-						Xpredictivo2(t,cero)*((delta*delta)/2) +
-						Xpredictivo3(t, cero)*((delta*delta*delta)/6) +
-						Xpredictivo4(t, cero)*((delta*delta*delta*delta)/24) +
-						Xpredictivo5(t, cero)*((delta*delta*delta*delta*delta)/120)
-				;
-	}
-
-	private static Double Xpredictivo0(Double t, Double delta) {
-		return (xValues.get(t) + (vValues.get(t) *delta));
-	}
-
-	private static Double Xpredictivo1(Double t, Double delta) {
-		return (xValues.get(t) + (vValues.get(t) *delta));
-	}
-
-	private static Double Xpredictivo2(Double t, Double delta) {
-		return (xValues.get(t) + (vValues.get(t) *delta));
-	}
-
-	private static Double Xpredictivo3(Double t, Double delta) {
-		return (xValues.get(t) + (vValues.get(t) *delta));
-	}
-
-	private static Double Xpredictivo4(Double t, Double delta) {
-		return (xValues.get(t) + (vValues.get(t) *delta));
-	}
-
-	private static Double Xpredictivo5(Double t, Double delta) {
-		return (xValues.get(t) + (vValues.get(t) *delta));
-	}
-
-
-	/**
-	 * Used for step two. Correct next velocity
-	 * @param t
-	 * @param delta
-	 * @return
-	 */
-	private static Double Vcorrection(Double t, Double delta) {
-		return (vValues.get(t) + (A(t+delta)*delta));
-	}
-
-	/**
-	 * Used for step two. Correct next position
-	 * @param t
-	 * @param delta
-	 * @return
-	 */
-	private static Double Xcorrection(Double t, Double delta) {
-		return (xValues.get(t) + (vValues.get(t+delta) *delta));
-	}
-
-	private static Double A(Double time) {
-		return 1.0;
+	private static double realPosition(Double t) {
+		return A * Math.exp(-(gamma/(2*mass)) * t) * Math.cos(Math.sqrt((Kconstant/mass) - (Math.pow(gamma,2)/ (4 * Math.pow(mass,2)))) * t);
 	}
 }
