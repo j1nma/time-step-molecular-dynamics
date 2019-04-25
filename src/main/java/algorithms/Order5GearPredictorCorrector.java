@@ -1,10 +1,5 @@
 package algorithms;
 
-import sun.java2d.cmm.kcms.KcmsServiceProvider;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @see "teorica4 diapo 21 y 22"
  * @see "https://slideplayer.com/slide/11345253/ diapo 26"
@@ -12,64 +7,48 @@ import java.util.Map;
  */
 public class Order5GearPredictorCorrector {
 
-	public static void main(String[] args) {
-		run();
+	private double mass;
+	private double r, r1, r2, r3, r4, r5;
+	private Force force;
+
+	public Order5GearPredictorCorrector(double mass,
+	                                    double initialPosition,
+	                                    double initialVelocity,
+	                                    Force force) {
+		this.mass = mass;
+		this.r = initialPosition;
+		this.r1 = initialVelocity;
+		this.force = force;
+		this.r2 = force.F(r, r1) / mass;
+		this.r3 = force.F(r1, r2) / mass;
+		this.r4 = force.F(r2, r3) / mass;
+		this.r5 = force.F(r3, r4) / mass;
 	}
 
-	private static Integer step = 0;
+	double updatePosition(double dt) {
 
-	// Parameters
-	private static Double time = 0.0; // s
-	private static Double dt = 1e-4; // s
-	private static Double mass = 70.0; //kg
-	private static Double Kconstant = 100000.0; // N/m
-	private static Double gamma = 100.0; // kg/s
-	private static Double maxTime = 5.0; // s
-	private static Double acceleration = 1.0; // ???
+		// Predict
+		double rp, rp1, rp2, rp3, rp4, rp5;
+		rp = r + (r1 * dt) + ((r2 * Math.pow(dt, 2)) / 2.0) + ((r3 * Math.pow(dt, 3.0)) / 6.0) + ((r4 * Math.pow(dt, 4.0)) / 24.0) + ((r5 * Math.pow(dt, 5.0)) / 120.0);
+		rp1 = r1 + (r2 * dt) + (r3 * Math.pow(dt, 2) / 2.0) + (r4 * Math.pow(dt, 3.0)) / 6.0 + (r5 * Math.pow(dt, 4.0)) / 24.0;
+		rp2 = r2 + (r3 * dt) + ((r4 * Math.pow(dt, 2)) / 2.0) + (r5 * Math.pow(dt, 3.0)) / 6.0;
+		rp3 = r3 + (r4 * dt) + ((r5 * Math.pow(dt, 2)) / 2.0);
+		rp4 = r4 + (r5 * dt);
+		rp5 = r5;
 
-	// Initial State
-	private static Double position = 1.0; // m (initial position on time=0)
-	private static Double A = 1.0; // ????
-	private static Double velocity = 0.0; //- A *(gamma/(2*mass)); // m/s (initial velocity on time=0)
+		// Evaluate
+		double newForce = force.F(rp, rp1);
+		double deltaAcceleration = (newForce / mass) - rp2;
+		double deltaR2 = (deltaAcceleration * Math.pow(dt, 2.0)) / 2.0;
 
-	public static void run() {
+		// Correct
+		r = rp + (3.0 / 16.0) * deltaR2;
+		r1 = rp1 + ((251.0 / 360.0) * deltaR2 * 1.0) / dt;
+		r2 = rp2 + (1.0 * deltaR2 * 2.0) / Math.pow(dt, 2);
+		r3 = rp3 + ((11.0 / 18.0) * deltaR2 * 6.0) / Math.pow(dt, 3);
+		r4 = rp4 + ((1.0 / 6.0) * deltaR2 * 24.0) / Math.pow(dt, 4);
+		r5 = rp5 + ((1.0 / 60.0) * deltaR2 * 120.0) / Math.pow(dt, 5);
 
-		System.out.println();
-		System.out.println();
-		System.out.println();
-
-		while (time < maxTime) {
-			System.out.printf("Step: %d  Position: %e  Velocity: %f  Error2: %e Real: %e\n",step++, position, velocity, Math.pow(Math.abs(realPosition(time)-position),2), realPosition(time));
-
-
-			Double Xp2 = F(position,velocity)/mass;
-			Double Xp3 = F(velocity,Xp2)/mass;
-			Double Xp4 = F(Xp2,Xp3)/mass;
-			Double Xp5 = F(Xp3,Xp4)/mass;
-
-
-			// Predict
-			Double r0p = position + velocity * dt + Xp2 * Math.pow(dt,2) / 2 + Xp3 * Math.pow(dt,3) / 6 + Xp4 * Math.pow(dt,4) / 24 + Xp5 * Math.pow(dt,5) / 120;
-			Double r1p = velocity + Xp2 * dt + Xp3 * Math.pow(dt,2) / 2 + Xp4 * Math.pow(dt,3) / 6 + Xp5 * Math.pow(dt,4) / 24;
-			Double r2p = Xp2 + Xp3 * dt + Xp4 * Math.pow(dt,2) / 2 + Xp5 * Math.pow(dt,3) / 6;
-
-			// Estimate
-			Double dr2 = ((F(r0p, r1p)/mass) - r2p) * Math.pow(dt,2) / 2;
-
-			// Correct
-			position = r0p+(3.0/16)*dr2;
-			velocity = r1p+(251.0/360)*dr2;
-
-			time+=dt;
-		}
-	}
-
-
-	private static Double F(Double x, Double y) {
-		return -Kconstant*x-y*gamma;
-	}
-
-	private static double realPosition(Double t) {
-		return A * Math.exp(-(gamma/(2*mass)) * t) * Math.cos(Math.sqrt((Kconstant/mass) - (Math.pow(gamma,2)/ (4 * Math.pow(mass,2)))) * t);
+		return r;
 	}
 }
