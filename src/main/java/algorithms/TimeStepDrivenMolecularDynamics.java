@@ -86,8 +86,9 @@ public class TimeStepDrivenMolecularDynamics {
 			currentFrame++;
 		}
 
+		// MSEs normalized by total number of steps
 		for (int i = 0; i < mse.length; i++) {
-			mse[i] /= limitTime / dt;
+			mse[i] /= (limitTime / dt);
 			System.out.print(INTEGRATORS[i] + ":\t" + mse[i] + " [m^2]\n");
 		}
 
