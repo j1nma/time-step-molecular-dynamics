@@ -33,11 +33,11 @@ public class TimeStepDrivenMolecularDynamics {
 		// Initialize state
 		double initialVelocity = -1 * (gamma / (2 * mass)); // m/s (initial velocity at time=0)
 
-		// ++++ BEGIN MAIN LOOP THAT RUNS ALL INTEGRATORS
-		final Stack<Double> timeStepValues = new Stack<>();
-		final Stack<Double> analyticValues = new Stack<>();
-		final Stack<Double> beemanPositionValues = new Stack<>();
-		final Stack<Double> velocityVerletPositionValues = new Stack<>();
+		Stack<Double> timeStepValues = new Stack<>();
+		Stack<Double> analyticValues = new Stack<>();
+		Stack<Double> beemanPositionValues = new Stack<>();
+		Stack<Double> velocityVerletPositionValues = new Stack<>();
+		Stack<Double> order5GearPredictorCorrectorPositionValues = new Stack<>();
 
 		Force springForce = new SpringForce(k, gamma);
 		double previousAcceleration = springForce.F(initialPosition, initialVelocity) / mass;
@@ -45,11 +45,13 @@ public class TimeStepDrivenMolecularDynamics {
 		SpringAnalyticSolution springAnalyticSolution = new SpringAnalyticSolution();
 		Beeman beeman = new Beeman(mass, initialPosition, initialVelocity, previousAcceleration, springForce);
 		VelocityVerlet velocityVerlet = new VelocityVerlet(mass, initialPosition, initialVelocity, springForce);
+		Order5GearPredictorCorrector order5GearPredictorCorrector = new Order5GearPredictorCorrector(mass, initialPosition, initialVelocity, springForce);
 
 		timeStepValues.push(time);
 		analyticValues.push(springAnalyticSolution.getPosition(k, gamma, mass, time));
 		beemanPositionValues.push(initialPosition);
 		velocityVerletPositionValues.push(initialPosition);
+		order5GearPredictorCorrectorPositionValues.push(initialPosition);
 
 		while (time < limitTime) {
 			time += dt;
@@ -57,6 +59,7 @@ public class TimeStepDrivenMolecularDynamics {
 			analyticValues.push(springAnalyticSolution.getPosition(k, gamma, mass, time));
 			beemanPositionValues.push(beeman.updatePosition(dt));
 			velocityVerletPositionValues.push(velocityVerlet.updatePosition(dt));
+			order5GearPredictorCorrectorPositionValues.push(order5GearPredictorCorrector.updatePosition(dt));
 		}
 
 		OctaveWriter octaveWriter;
@@ -67,14 +70,12 @@ public class TimeStepDrivenMolecularDynamics {
 					analyticValues,
 					beemanPositionValues,
 					velocityVerletPositionValues,
+					order5GearPredictorCorrectorPositionValues,
 					positionsPlotFile);
 			octaveWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// ++++ END MAIN LOOP THAT RUNS ALL INTEGRATORS
-
 
 //		eventWriter.close();
 
