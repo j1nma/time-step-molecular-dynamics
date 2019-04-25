@@ -36,7 +36,7 @@ public class SimulationOptions extends OptionsBase {
 
 	@Option(
 			name = "limitTime",
-			abbrev = 't',
+			abbrev = 'l',
 			help = "Maximum time of simulation (s).",
 			category = "startup",
 			defaultValue = "5.0"
@@ -45,16 +45,16 @@ public class SimulationOptions extends OptionsBase {
 
 	@Option(
 			name = "deltaT",
-			abbrev = 'd',
+			abbrev = 't',
 			help = "Simulation delta time (s).",
 			category = "startup",
-			defaultValue = "0.1"
+			defaultValue = "0.001"
 	)
 	public double deltaT;
 
 	@Option(
 			name = "printDeltaT",
-			abbrev = 's',
+			abbrev = 'p',
 			help = "Simulation print delta time (s).",
 			category = "startup",
 			defaultValue = "0.5"
@@ -66,7 +66,7 @@ public class SimulationOptions extends OptionsBase {
 			abbrev = 'm',
 			help = "Particle mass (kg).",
 			category = "startup",
-			defaultValue = "70"
+			defaultValue = "70.0"
 	)
 	public double mass;
 
@@ -81,31 +81,19 @@ public class SimulationOptions extends OptionsBase {
 
 	@Option(
 			name = "vdc",
-			abbrev = 'k',
+			abbrev = 'g',
 			help = "Viscous damping coefficient (kg/s).",
 			category = "startup",
-			defaultValue = "100"
+			defaultValue = "100.0"
 	)
 	public double vdc;
 
 	@Option(
 			name = "initialPosition",
-			abbrev = 'p',
+			abbrev = 'i',
 			help = "Initial position at t=0 (m).",
 			category = "startup",
 			defaultValue = "1.0"
 	)
 	public double initialPosition;
-
-
-	//TODO: WHAT ABOUT A in  - A 𝛾/(2m) ?
-	@Option(
-			name = "initialVelocity",
-			abbrev = 'v',
-			help = "Initial velocity at t=0 (m/s).",
-			category = "startup",
-			defaultValue = "1.0"
-	)
-	public double initialVelocity;
-
 }

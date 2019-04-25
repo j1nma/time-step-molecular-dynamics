@@ -9,4 +9,4 @@ from numpy import zeros
 from oct2py import octave
 octave.addpath('./scripts/')
 
-octave.eval("beeman");
+octave.eval("positions");

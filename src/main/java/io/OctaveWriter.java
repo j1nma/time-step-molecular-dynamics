@@ -29,7 +29,8 @@ public class OctaveWriter {
 
 	public void writePositionsThroughTime(final Stack<Double> timeStepValues,
 	                                      final Stack<Double> analyticValues,
-	                                      final Stack<Double> positionsValues) throws IOException { //TODO adapt
+	                                      final Stack<Double> beemanPositionValues,
+	                                      final String positionPlotFile) throws IOException { //TODO adapt
 		final StringBuilder builder = new StringBuilder();
 		builder.append("x = [").append(Double.toString(timeStepValues.pop()));
 		while (!timeStepValues.isEmpty()) {
@@ -41,9 +42,9 @@ public class OctaveWriter {
 			builder.append(", ").append(Double.toString(analyticValues.pop()));
 		}
 		builder.append("];").append("\n")
-				.append("y2 = [").append(Double.toString(positionsValues.pop()));
-		while (!positionsValues.isEmpty()) {
-			builder.append(", ").append(Double.toString(positionsValues.pop()));
+				.append("y2 = [").append(Double.toString(beemanPositionValues.pop()));
+		while (!beemanPositionValues.isEmpty()) {
+			builder.append(", ").append(Double.toString(beemanPositionValues.pop()));
 		}
 		builder.append("];").append("\n")
 				.append("plot(x, y1, \";Analítica;\");").append("\n")
@@ -52,7 +53,7 @@ public class OctaveWriter {
 				.append("set(gca, 'ytick', -1:0.2:1);").append("\n")
 				.append("hold all").append("\n")
 				.append("plot(x, y2, \";Beeman;\", \"color\", 'g','LineStyle','--');").append("\n")
-				.append("print(\"./output/beeman/beeman.svg\", \"-dsvg\", \"-F:12\")").append("\n")
+				.append("print(\"").append(positionPlotFile).append("\", \"-dsvg\", \"-F:12\")").append("\n")
 		;
 
 		fileWriter.append(builder.toString());
