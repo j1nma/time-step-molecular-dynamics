@@ -27,11 +27,12 @@ public class OctaveWriter {
 		this.fileWriter.close();
 	}
 
-	public void writePositionsThroughTime(final Stack<Double> timeStepValues,
-	                                      final Stack<Double> analyticValues,
-	                                      final Stack<Double> beemanPositionValues,
-	                                      final Stack<Double> velocityVerletPositionValues,
-	                                      final String positionPlotFile) throws IOException {
+	public void writePositionsThroughTime(Stack<Double> timeStepValues,
+	                                      Stack<Double> analyticValues,
+	                                      Stack<Double> beemanPositionValues,
+	                                      Stack<Double> velocityVerletPositionValues,
+	                                      Stack<Double> order5GearPredictorCorrectorPositionValues,
+	                                      String positionPlotFile) throws IOException {
 		final StringBuilder builder = new StringBuilder();
 
 		// Time step values
@@ -62,6 +63,13 @@ public class OctaveWriter {
 		}
 		builder.append("];").append("\n");
 
+		// Order 5 Gear Predictor Corrector values
+		builder.append("y4 = [").append(Double.toString(order5GearPredictorCorrectorPositionValues.pop()));
+		while (!order5GearPredictorCorrectorPositionValues.isEmpty()) {
+			builder.append(", ").append(Double.toString(order5GearPredictorCorrectorPositionValues.pop()));
+		}
+		builder.append("];").append("\n");
+
 		// Plot
 		builder.append("plot(x, y1, \";Analítica;\");").append("\n")
 				.append("xlabel(\"Tiempo (s)\");").append("\n")
@@ -70,6 +78,7 @@ public class OctaveWriter {
 				.append("hold all").append("\n")
 				.append("plot(x, y2, \";Beeman;\", \"color\", 'g','LineStyle','--');").append("\n")
 				.append("plot(x, y3, \";Velocity Verlet;\", \"color\", 'r','LineStyle','--');").append("\n")
+				.append("plot(x, y4, \";Gear predictor-corrector de orden 5;\", \"color\", 'b','LineStyle','--');").append("\n")
 				.append("print(\"").append(positionPlotFile).append("\", \"-dsvg\", \"-F:12\")").append("\n");
 
 		fileWriter.append(builder.toString());
