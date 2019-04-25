@@ -1,28 +1,29 @@
 import algorithms.TimeStepDrivenMolecularDynamics;
 import com.google.devtools.common.options.OptionsParser;
-import io.OvitoWriter;
 import io.Parser;
 import io.SimulationOptions;
 import models.Particle;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
 public class App {
 
 	private static final String OUTPUT_DIRECTORY = "./output";
+	private static final String EX_1_DIRECTORY = OUTPUT_DIRECTORY + "/ex1";
+	private static final String POSITIONS_PLOT_FILE = EX_1_DIRECTORY + "/positions.svg";
+
 	private static final String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file.txt";
 	private static PrintWriter eventWriter;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
-		// Create directories
+		// Create output directories
 		new File(OUTPUT_DIRECTORY).mkdirs();
+		new File(EX_1_DIRECTORY).mkdirs();
+
 
 		// Parse command line options
 		OptionsParser parser = OptionsParser.newOptionsParser(SimulationOptions.class);
@@ -44,7 +45,7 @@ public class App {
 		List<Particle> particles = staticAndDynamicParser.getParticles();
 
 		// Initialize file writers
-		eventWriter = new PrintWriter(new FileWriter("TODO GAS FILE")); //TODO CORRECT FILE NAME
+//		eventWriter = new PrintWriter(new FileWriter("TODO GAS FILE")); //TODO CORRECT FILE NAME
 
 		// Run algorithm
 		runAlgorithm(
@@ -55,7 +56,7 @@ public class App {
 				options.k,
 				options.vdc,
 				options.initialPosition,
-				options.initialVelocity
+				options.mass
 		);
 	}
 
@@ -66,7 +67,7 @@ public class App {
 	                                 double k,
 	                                 double vdc,
 	                                 double initialPosition,
-	                                 double initialVelocity) {
+	                                 double mass) {
 
 		StringBuffer buffer = new StringBuffer();
 		long startTime = System.currentTimeMillis();
@@ -81,7 +82,8 @@ public class App {
 				k,
 				vdc,
 				initialPosition,
-				initialVelocity
+				mass,
+				POSITIONS_PLOT_FILE
 		);
 
 		long stopTime = System.currentTimeMillis();
@@ -90,14 +92,14 @@ public class App {
 		System.out.println("======================== Results ========================");
 		System.out.println("Time Step Driven Molecular Dynamics execution time (ms):\t" + elapsedTime);
 
-		OvitoWriter<Particle> ovitoWriter;
-		try {
-			ovitoWriter = new OvitoWriter<>(Paths.get(OVITO_FILE));
-			ovitoWriter.writeBuffer(buffer);
-			ovitoWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		OvitoWriter<Particle> ovitoWriter;
+//		try {
+//			ovitoWriter = new OvitoWriter<>(Paths.get(OVITO_FILE));
+//			ovitoWriter.writeBuffer(buffer);
+//			ovitoWriter.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private static void printUsage(OptionsParser parser) {
