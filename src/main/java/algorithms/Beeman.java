@@ -1,102 +1,55 @@
 package algorithms;
 
-import io.OctaveWriter;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Stack;
-
 public class Beeman {
 
-	private static final String SCRIPTS_DIRECTORY = "./scripts";
-	private static final String BEEMAN_OCTAVE_FILE = SCRIPTS_DIRECTORY + "/beeman.m";
+	private double mass;
+	private double currentPosition;
+	private double currentVelocity;
+	private double previousAcceleration;
+	private Force force;
 
-	public static void main(String[] args) {
-		run();
+	public Beeman(double mass,
+	              double initialPosition,
+	              double initialVelocity,
+	              double previousAcceleration,
+	              Force force) {
+		this.mass = mass;
+		this.currentPosition = initialPosition;
+		this.currentVelocity = initialVelocity;
+		this.previousAcceleration = previousAcceleration;
+		this.force = force;
 	}
 
-	private static Double Flast;
+	double updatePosition(double dt) {
+		double currentAcceleration;
+		double nextPosition;
+		double nextVelocity;
+		double nextAcceleration;
 
-	private static Integer step = 0;
+		// Calculate current acceleration
+		currentAcceleration = force.F(currentPosition, currentVelocity) / mass;
 
-	// Parameters
-	private static Double time = 0.0; // s
-	private static Double dt = 0.001; // s
-	private static Double mass = 70.0; // kg
-	private static Double Kconstant = 10000.0; // N/m
-	private static Double gamma = 100.0; // kg/s
-	private static Double maxTime = 5.0; // s
+		// Calculate next position
+		nextPosition = X(dt, currentAcceleration);
 
-	// Initial State
-	private static Double position = 1.0; // m (initial position at time=0)
-	private static Double A = 1.0; // ????
-	private static Double velocity = -A * (gamma / (2 * mass)); // m/s (initial velocity at time=0)
-	private static Double lastX = position;
-	private static Double lastV = velocity;
-	private static Double velocityPredicted;
+		// Calculate next acceleration
+		nextAcceleration = force.F(nextPosition, currentVelocity) / mass;
 
-	public static void run() {
+		// Calculate next velocity
+		nextVelocity = Vcorrector(dt, nextAcceleration, currentAcceleration);
 
-		final Stack<Double> timeStepValues = new Stack<>();
-		final Stack<Double> analyticValues = new Stack<>();
-		final Stack<Double> positionsValues = new Stack<>();
-
-		timeStepValues.push(time);
-		analyticValues.push(realPosition(time));
-		positionsValues.push(position);
-
-		Flast = F(position, velocity);
-
-		while (time < maxTime) {
-			lastX = position;
-
-			// Calculate current position
-			position = X(dt);
-
-			// Predict velocity
-			velocityPredicted = Vpredictor(dt);
-
-			// Correct velocity
-			lastV = velocity;
-			velocity = Vcorrector(dt, position, velocityPredicted);
-
-			Flast = F(lastX, lastV);
-
-//			System.out.printf("Step: %d Position: %f Velocity: %f  Error: %e  %s\n", step++, position, velocity, Math.pow(Math.abs(realPosition(time) - position), 2), velocity >= 0 ? "-->" : "    <--");
-			time += dt;
-			timeStepValues.push(time);
-			analyticValues.push(realPosition(time));
-			positionsValues.push(position);
-		}
-
-		OctaveWriter octaveWriter;
-		try {
-			octaveWriter = new OctaveWriter(Paths.get(BEEMAN_OCTAVE_FILE));
-			octaveWriter.writePositionsThroughTime(timeStepValues, analyticValues, positionsValues);
-			octaveWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		this.currentPosition = nextPosition;
+		this.currentVelocity = nextVelocity;
+		this.previousAcceleration = currentAcceleration;
+		return nextPosition;
 	}
 
-	private static Double X(Double delta) {
-		return position + velocity * delta + ((2.0 / 3) * delta * delta) * (F(position, velocity) / mass) - ((1.0 / 6) * Flast / mass) * delta * delta;
+	private double X(double dt, double currentAcceleration) {
+		return this.currentPosition + this.currentVelocity * dt + (2.0 / 3.0) * currentAcceleration * Math.pow(dt, 2) - (1.0 / 6.0) * this.previousAcceleration * Math.pow(dt, 2);
 	}
 
-	private static Double Vpredictor(Double delta) {
-		return velocity + (3.0 / 2) * (F(position, velocity) / mass) * delta - 0.5 * (Flast / mass) * delta;
+	private double Vcorrector(double dt, double nextAcceleration, double currentAcceleration) {
+		return this.currentVelocity + (1.0 / 3.0) * nextAcceleration * dt + (5.0 / 6.0) * currentAcceleration * dt - (1.0 / 6.0) * this.previousAcceleration * dt;
 	}
 
-	private static Double Vcorrector(Double delta, Double Xnext, Double Vnext) {
-		return velocity + (1.0 / 3) * (F(Xnext, Vnext) / mass) * delta + (5.0 / 6) * (F(lastX, lastV) / mass) * delta - (1.0 / 6) * (Flast / mass) * delta;
-	}
-
-	private static Double F(Double x, Double v) {
-		return (-Kconstant * x - gamma * v);
-	}
-
-	private static double realPosition(Double time) {
-		return A * Math.exp(-(gamma / (2 * mass)) * time) * Math.cos(Math.sqrt((Kconstant / mass) - (gamma * gamma / (4 * mass * mass))) * time);
-	}
 }
