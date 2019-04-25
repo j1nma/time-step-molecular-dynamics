@@ -31,35 +31,43 @@ public class TimeStepDrivenMolecularDynamics {
 			String positionsPlotFile) {
 
 		// Initialize state
-		double position = initialPosition; // m (initial position at time=0)
-		double velocity = -1 * (gamma / (2 * mass)); // m/s (initial velocity at time=0)
+		double initialVelocity = -1 * (gamma / (2 * mass)); // m/s (initial velocity at time=0)
 
 		// ++++ BEGIN MAIN LOOP THAT RUNS ALL INTEGRATORS
 		final Stack<Double> timeStepValues = new Stack<>();
 		final Stack<Double> analyticValues = new Stack<>();
 		final Stack<Double> beemanPositionValues = new Stack<>();
+		final Stack<Double> velocityVerletPositionValues = new Stack<>();
 
 		Force springForce = new SpringForce(k, gamma);
-		double previousAcceleration = springForce.F(position, velocity) / mass;
+		double previousAcceleration = springForce.F(initialPosition, initialVelocity) / mass;
 
 		SpringAnalyticSolution springAnalyticSolution = new SpringAnalyticSolution();
-		Beeman beeman = new Beeman(mass, position, velocity, previousAcceleration, springForce);
+		Beeman beeman = new Beeman(mass, initialPosition, initialVelocity, previousAcceleration, springForce);
+		VelocityVerlet velocityVerlet = new VelocityVerlet(mass, initialPosition, initialVelocity, springForce);
 
 		timeStepValues.push(time);
 		analyticValues.push(springAnalyticSolution.getPosition(k, gamma, mass, time));
-		beemanPositionValues.push(position);
+		beemanPositionValues.push(initialPosition);
+		velocityVerletPositionValues.push(initialPosition);
 
 		while (time < limitTime) {
 			time += dt;
 			timeStepValues.push(time);
 			analyticValues.push(springAnalyticSolution.getPosition(k, gamma, mass, time));
 			beemanPositionValues.push(beeman.updatePosition(dt));
+			velocityVerletPositionValues.push(velocityVerlet.updatePosition(dt));
 		}
 
 		OctaveWriter octaveWriter;
 		try {
 			octaveWriter = new OctaveWriter(Paths.get(OCTAVE_FILE));
-			octaveWriter.writePositionsThroughTime(timeStepValues, analyticValues, beemanPositionValues, positionsPlotFile);
+			octaveWriter.writePositionsThroughTime(
+					timeStepValues,
+					analyticValues,
+					beemanPositionValues,
+					velocityVerletPositionValues,
+					positionsPlotFile);
 			octaveWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
