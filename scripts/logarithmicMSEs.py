@@ -1,11 +1,8 @@
 import os
 import subprocess
-import csv
 import numpy
-from numpy import vstack, zeros, log
+from numpy import zeros, log
 import matplotlib.pyplot as plt
-
-printDeltaT = 0.001
 
 dirName = './output';
 ex1DirName = dirName + '/ex1';
@@ -13,6 +10,8 @@ ex1DirName = dirName + '/ex1';
 if not os.path.exists(ex1DirName):
         os.mkdir(ex1DirName)
         print("Directory ", ex1DirName, " created.")
+
+printDeltaT = 0.001
 
 xRange = range(-6, 0, 1)
 
@@ -26,7 +25,6 @@ k = 0;
 
 # Generate a file with set of parameters
 for e in xRange:
-	print(10**e)
 	command = 'java -jar ./target/time-step-molecular-dynamics-1.0-SNAPSHOT.jar --deltaT={deltaT} --printDeltaT={printDeltaT}'.format(
 						deltaT = 10**e,
 						printDeltaT = printDeltaT,
@@ -47,13 +45,11 @@ for e in xRange:
 	number = number.replace(' [m^2]\n', '')
 	verlet_mse[k] = float(number)
 	line = p.stdout.readline(); # Order5GearPredictorCorrector line
-	print(line)
 	number = line.decode()
 	number = number.split('\t')
 	number = number[1]
 	number = number.replace(' [m^2]\n', '')
 	gear_mse[k] = float(number)
-	print(gear_mse[k])
 	k = k + 1
 
 # Prepare MSE plot
@@ -70,5 +66,6 @@ plt.ylabel("log$_{10}$(MSE) [$m^2$]")
 plt.xticks(xRange)
 plt.ylim([-30, 30])
 plt.yticks(numpy.arange(-30, 30, 5))
+
 # Save plot
 plt.savefig('./output/ex1/logarithmicMSEs.svg')
