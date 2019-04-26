@@ -1,5 +1,7 @@
 package algorithms;
 
+import models.Force;
+
 public class VelocityVerlet {
 
 	private double mass;

@@ -1,5 +1,7 @@
 package algorithms;
 
+import models.Force;
+
 public class Beeman {
 
 	private double mass;

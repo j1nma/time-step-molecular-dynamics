@@ -1,5 +1,7 @@
 package algorithms;
 
+import models.Force;
+
 /**
  * @see "teorica4 diapo 21 y 22"
  * @see "https://slideplayer.com/slide/11345253/ diapo 26"

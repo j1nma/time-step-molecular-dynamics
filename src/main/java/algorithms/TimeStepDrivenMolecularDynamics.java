@@ -1,6 +1,9 @@
 package algorithms;
 
 import io.OctaveWriter;
+import models.Force;
+import models.SpringAnalyticSolution;
+import models.SpringForce;
 
 import java.io.IOException;
 import java.nio.file.Paths;
