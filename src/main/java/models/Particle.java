@@ -11,26 +11,19 @@ public class Particle implements Cloneable {
 	private final int id;
 	private Vector2D position;
 	private Vector2D velocity;
-	private double radius;
 	private double mass;
 	private Set<Particle> neighbours;
 
-	public Particle(int id, double radius, double mass) {
+	public Particle(int id, double mass) {
 		this.id = id;
-		this.radius = radius;
 		this.mass = mass;
 		this.neighbours = new HashSet<>();
 	}
 
-	/**
-	 * The distance between points contemplates border-to-border distance.
-	 * That is why the radii are subtracted.
-	 */
 	public double getDistanceBetween(Particle particle) {
 		Vector2D particlePosition = particle.getPosition();
-		return Math.sqrt(Math.pow(position.getX() - particlePosition.getX(), 2) +
-				Math.pow(position.getY() - particlePosition.getY(), 2))
-				- radius - particle.getRadius();
+		return Math.sqrt(Math.pow(position.getX() - particlePosition.getX(), 2)
+				+ Math.pow(position.getY() - particlePosition.getY(), 2));
 	}
 
 	public void addNeighbour(Particle neighbour) {
@@ -62,7 +55,6 @@ public class Particle implements Cloneable {
 				+ df.format(velocity.getX()) + " "
 				+ df.format(velocity.getY()) + " "
 				+ mass + " "
-				+ radius
 				+ df.format(getKineticEnergy()) + " ";
 	}
 
@@ -88,10 +80,6 @@ public class Particle implements Cloneable {
 
 	public void setVelocity(Vector2D velocity) {
 		this.velocity = velocity;
-	}
-
-	public double getRadius() {
-		return radius;
 	}
 
 	public double getMass() {
