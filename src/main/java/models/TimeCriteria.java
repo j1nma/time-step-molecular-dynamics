@@ -4,14 +4,14 @@ import java.util.List;
 
 public class TimeCriteria implements Criteria {
 
-	private final double limit;
+	private final double limitTime;
 
 	public TimeCriteria(double limit) {
-		this.limit = limit;
+		this.limitTime = limit;
 	}
 
 	@Override
 	public boolean test(List<Particle> particles, double time) {
-		return time > limit;
+		return time > limitTime;
 	}
 }
