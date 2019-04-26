@@ -75,11 +75,21 @@ public class LennardJonesGas {
 		int printFrame = (int) Math.ceil(printDeltaT / dt);
 
 		while (!endCriteria.test(particles, time)) {
+
 			// Calculate neighbours
 			CellIndexMethod.run(particles,
 					boxHeight > boxWidth ? boxHeight : boxWidth,
-					(int) interactionRadius + 1,
+					(int) interactionRadius + 1, //TODO watch out, may delete "+1"
 					interactionRadius);
+
+			// si está cerca de una pared le agrego una falsa, no como vecina pero como parte de la colección para la sumatoria de fuerzas
+			// Hacer una f(x) que reciba la partícula y un collection de partícula
+			System.out.println("Es decir por cada particula calcular la sumatoria de todas las fuerzas de todas las particulas alrededor que le generan a esta.");
+
+			System.out.println("Para eso ultimo usar algún integrador (el que menos memoria consuma).");
+
+			System.out.println("manejar el caso de cuando interactua contra la esquina cuando cambia de box: como entre particulas hay fuerza de Potencial que repela");
+			// la esquina estará entre la interacción, representada por una partícula
 
 //			if ((currentFrame % printFrame) == 0) {
 ////				try {
@@ -114,8 +124,8 @@ public class LennardJonesGas {
 
 	private static void setDummyParticles(StringBuffer buff, List<Particle> particles) {
 		// Particles for fixing Ovito grid
-		Particle dummy1 = new Particle(-1, 0, 0);
-		Particle dummy2 = new Particle(0, 0, 0);
+		Particle dummy1 = new Particle(-1, 0);
+		Particle dummy2 = new Particle(0, 0);
 		dummy1.setPosition(new Vector2D(0, 0));
 		dummy1.setVelocity(new Vector2D(0, 0));
 		dummy2.setPosition(new Vector2D(boxWidth, 200));
@@ -134,26 +144,11 @@ public class LennardJonesGas {
 				p.getPosition().getX() + " " +
 				p.getPosition().getY() + " " +
 				p.getVelocity().getX() + " " +
-				p.getVelocity().getY() + " " +
-				p.getRadius() + " "
+				p.getVelocity().getY() + " "
 				;
 	}
 
 	public static void run(List<Particle> particles, StringBuffer buffer, PrintWriter eventWriter, double limitTime, double deltaT, double printDeltaT, double k, double vdc, double initialPosition, double mass, String leftParticlesPlotFile) {
-
-
-		//		System.out.println("Generar en java todas las particulas. no hace falta hacerlo en python. Recibir por" +
-//				"parametro la cantidad y las dimensiones del lugar");
-//
-//		System.out.println("hacer el while y que en cada frame se calcule la posicion y velocidad de todas respecto de otras");
-//
-//		System.out.println("Es decir por cada particula calcular la sumatoria de todas las fuerzas de todas las particulas alrededor que le generan a esta.");
-//
-//		System.out.println("Para eso ultimo mirar verlet basico y usar ese.");
-//
-//		System.out.println("recordar que esto es por tiempo. no por eventos");
-//
-//		System.out.println("no c como manejar el caso de cuando choca contra la esquina cuando cambia de box....");
 
 	}
 }
