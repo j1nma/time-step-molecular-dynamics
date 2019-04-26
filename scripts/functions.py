@@ -75,7 +75,7 @@ def generate_lennard_jones_gas_file(number_of_particles, area_length, initial_sp
     lennardJonesGasDirName = dirName + '/lennardJonesGas';
     if not os.path.exists(lennardJonesGasDirName):
                     os.mkdir(lennardJonesGasDirName)
-                    print("Directory " , lennardJonesGasdirName ,  " Created ")
+                    print("Directory " , lennardJonesGasDirName ,  " Created ")
     generate_static_file(lennardJonesGasDirName + '/Static-N=' + str(number_of_particles) + '.txt', number_of_particles, area_length, particle_radius, particle_mass)
     generate_dynamic_file(lennardJonesGasDirName + '/Dynamic-N=' + str(number_of_particles) + '.txt', number_of_particles, area_length, initial_speed, particle_radius)
 
