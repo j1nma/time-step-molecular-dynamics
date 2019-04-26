@@ -1,4 +1,6 @@
-package algorithms;
+package models;
+
+import models.Force;
 
 public class SpringForce implements Force {
 
