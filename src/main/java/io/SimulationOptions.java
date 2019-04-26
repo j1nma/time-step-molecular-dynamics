@@ -17,6 +17,15 @@ public class SimulationOptions extends OptionsBase {
 	public boolean help;
 
 	@Option(
+			name = "lennardJonesGas",
+			abbrev = 'j',
+			help = "Run Lennard Jones Gas simulation.",
+			category = "startup",
+			defaultValue = "false"
+	)
+	public boolean lennardJonesGas;
+
+	@Option(
 			name = "staticFile",
 			abbrev = 's',
 			help = "Path to static file.",

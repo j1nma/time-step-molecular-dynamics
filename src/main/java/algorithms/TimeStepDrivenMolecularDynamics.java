@@ -1,24 +1,26 @@
 package algorithms;
 
 import io.OctaveWriter;
-import models.Particle;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Stack;
 
 public class TimeStepDrivenMolecularDynamics {
 
 	private static final String SCRIPTS_DIRECTORY = "./scripts";
 	private static final String OCTAVE_FILE = SCRIPTS_DIRECTORY + "/positions.m";
+	private static final String[] INTEGRATORS = {
+			"Beeman",
+			"VelocityVerlet",
+			"Order5GearPredictorCorrector"
+	};
 
 	// Initial State
 	private static double time = 0.0;
 
 	public static void run(
-			List<Particle> particles,
 			StringBuffer buffer,
 			PrintWriter eventWriter,
 			double limitTime,
@@ -53,13 +55,41 @@ public class TimeStepDrivenMolecularDynamics {
 		velocityVerletPositionValues.push(initialPosition);
 		order5GearPredictorCorrectorPositionValues.push(initialPosition);
 
+		// MSE for each integrator
+		double[] mse = new double[3];
+
+		// Print frame
+		int currentFrame = 1;
+		int printFrame = (int) Math.ceil(printDeltaT / dt);
+
 		while (time < limitTime) {
 			time += dt;
-			timeStepValues.push(time);
-			analyticValues.push(springAnalyticSolution.getPosition(k, gamma, mass, time));
-			beemanPositionValues.push(beeman.updatePosition(dt));
-			velocityVerletPositionValues.push(velocityVerlet.updatePosition(dt));
-			order5GearPredictorCorrectorPositionValues.push(order5GearPredictorCorrector.updatePosition(dt));
+
+			double analyticValue = springAnalyticSolution.getPosition(k, gamma, mass, time);
+
+			double beemanPosition = beeman.updatePosition(dt);
+			mse[0] += Math.pow(analyticValue - beemanPosition, 2);
+
+			double velocityPosition = velocityVerlet.updatePosition(dt);
+			mse[1] += Math.pow(analyticValue - velocityPosition, 2);
+
+			double order5GearPredictorCorrectorPosition = order5GearPredictorCorrector.updatePosition(dt);
+			mse[2] += Math.pow(analyticValue - order5GearPredictorCorrectorPosition, 2);
+
+			if ((currentFrame % printFrame) == 0) {
+				timeStepValues.push(time);
+				analyticValues.push(analyticValue);
+				beemanPositionValues.push(beemanPosition);
+				velocityVerletPositionValues.push(velocityPosition);
+				order5GearPredictorCorrectorPositionValues.push(order5GearPredictorCorrectorPosition);
+			}
+			currentFrame++;
+		}
+
+		// MSEs normalized by total number of steps
+		for (int i = 0; i < mse.length; i++) {
+			mse[i] /= (limitTime / dt);
+			System.out.print(INTEGRATORS[i] + ":\t" + mse[i] + " [m^2]\n");
 		}
 
 		OctaveWriter octaveWriter;

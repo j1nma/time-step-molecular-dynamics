@@ -24,7 +24,6 @@ public class App {
 		new File(OUTPUT_DIRECTORY).mkdirs();
 		new File(EX_1_DIRECTORY).mkdirs();
 
-
 		// Parse command line options
 		OptionsParser parser = OptionsParser.newOptionsParser(SimulationOptions.class);
 		parser.parseAndExitUponError(args);
@@ -39,17 +38,22 @@ public class App {
 			printUsage(parser);
 		}
 
-		// Parse static and dynamic files
-		Parser staticAndDynamicParser = new Parser(options.staticFile, options.dynamicFile);
-		if (!staticAndDynamicParser.parse()) return;
-		List<Particle> particles = staticAndDynamicParser.getParticles();
+		if (options.lennardJonesGas) {
+			if (options.staticFile.isEmpty() || options.dynamicFile.isEmpty())
+				printUsage(parser);
+
+			// Parse static and dynamic files
+			Parser staticAndDynamicParser = new Parser(options.staticFile, options.dynamicFile);
+			if (!staticAndDynamicParser.parse()) return;
+			List<Particle> particles = staticAndDynamicParser.getParticles();
+		}
+
 
 		// Initialize file writers
 //		eventWriter = new PrintWriter(new FileWriter("TODO GAS FILE")); //TODO CORRECT FILE NAME
 
 		// Run algorithm
 		runAlgorithm(
-				particles,
 				options.limitTime,
 				options.deltaT,
 				options.printDeltaT,
@@ -60,8 +64,7 @@ public class App {
 		);
 	}
 
-	private static void runAlgorithm(List<Particle> particles,
-	                                 double limitTime,
+	private static void runAlgorithm(double limitTime,
 	                                 double deltaT,
 	                                 double printDeltaT,
 	                                 double k,
@@ -70,10 +73,8 @@ public class App {
 	                                 double mass) {
 
 		StringBuffer buffer = new StringBuffer();
-		long startTime = System.currentTimeMillis();
 
 		TimeStepDrivenMolecularDynamics.run(
-				particles,
 				buffer,
 				eventWriter,
 				limitTime,
@@ -85,12 +86,6 @@ public class App {
 				mass,
 				POSITIONS_PLOT_FILE
 		);
-
-		long stopTime = System.currentTimeMillis();
-		long elapsedTime = stopTime - startTime;
-
-		System.out.println("======================== Results ========================");
-		System.out.println("Time Step Driven Molecular Dynamics execution time (ms):\t" + elapsedTime);
 
 //		OvitoWriter<Particle> ovitoWriter;
 //		try {
