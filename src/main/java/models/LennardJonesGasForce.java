@@ -1,10 +1,11 @@
 package models;
 
+import models.neighbours.SumOfForces;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.util.Set;
 
-public class LennardJonesGasForce {
+public class LennardJonesGasForce implements SumOfForces {
 
 	/**
 	 * holeDepth
@@ -26,6 +27,7 @@ public class LennardJonesGasForce {
 		return ((12 * e) / rm) * (Math.pow(fraction, 13) - Math.pow(fraction, 7));
 	}
 
+	@Override
 	public Vector2D sumOfForces(final Particle particle, final Set<Particle> neighbours) {
 		double totalForceX = 0.0;
 		double totalForceY = 0.0;
