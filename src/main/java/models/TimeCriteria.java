@@ -11,7 +11,7 @@ public class TimeCriteria implements Criteria {
 	}
 
 	@Override
-	public boolean test(List<Particle> particles, double time) {
+	public boolean isDone(List<Particle> particles, double time) {
 		return time > limitTime;
 	}
 }

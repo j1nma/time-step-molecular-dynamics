@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface Criteria {
 
-	boolean test(final List<Particle> particles, final double time);
+	boolean isDone(final List<Particle> particles, final double time);
 }

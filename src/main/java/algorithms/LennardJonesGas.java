@@ -68,13 +68,13 @@ public class LennardJonesGas {
 //		for (Particle p : particles)
 //			buffer.append(particleToString(p)).append("\n");
 
-		Criteria endCriteria = new TimeCriteria(limitTime);
+		Criteria timeCriteria = new TimeCriteria(limitTime);
 
 		// Print frame
 		int currentFrame = 1;
 		int printFrame = (int) Math.ceil(printDeltaT / dt);
 
-		while (!endCriteria.test(particles, time)) {
+		while (!timeCriteria.isDone(particles, time)) {
 
 			// Calculate neighbours
 			CellIndexMethod.run(particles,
@@ -113,13 +113,6 @@ public class LennardJonesGas {
 	                                        double holeDepth) {
 		double fraction = distanceAtMinimum / distanceBetweenParticles;
 		return holeDepth * (Math.pow(fraction, 12) - 2.0 * Math.pow(fraction, 6));
-	}
-
-	public static double calculateForce(double distanceAtMinimum,
-	                                    double distanceBetweenParticles,
-	                                    double holeDepth) {
-		double fraction = distanceAtMinimum / distanceBetweenParticles;
-		return ((12 * holeDepth) / distanceAtMinimum) * (Math.pow(fraction, 13) - Math.pow(fraction, 7));
 	}
 
 	private static void setDummyParticles(StringBuffer buff, List<Particle> particles) {
