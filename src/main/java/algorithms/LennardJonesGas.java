@@ -7,6 +7,7 @@ import models.TimeCriteria;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,8 @@ public class LennardJonesGas {
 	private static double boxWidth = 400;
 	private static double centralHoleUnits = 10;
 	private static double currentSimulationTime = 0.0;
+	private static double RM = 1.0;
+	private static double e = 0.1;
 
 	// IO
 	private static final String SCRIPTS_DIRECTORY = "./scripts";
@@ -59,7 +62,7 @@ public class LennardJonesGas {
 	}
 
 	public static void run(
-			List<Particle> initialParticles,
+			List<Particle> particles,
 			StringBuffer buffer,
 			PrintWriter eventWriter,
 			double limitTime,
@@ -71,14 +74,9 @@ public class LennardJonesGas {
 			double initialVelocity,
 			String LEFT_PARTICLES_PLOT_FILE) {
 
-		List<Particle> particles = initialParticles;
 
 //		// Print to buffer and set dummy particles for Ovito grid
-//		setDummyParticles(buffer, particles);
-//
-//		// Print particles
-//		for (Particle p : particles)
-//			buffer.append(particleToString(p)).append("\n");
+		printFirstFrame(buffer, particles);
 
 		Criteria timeCriteria = new TimeCriteria(limitTime);
 
@@ -87,6 +85,10 @@ public class LennardJonesGas {
 		int printFrame = (int) Math.ceil(printDeltaT / dt);
 
 		while (!timeCriteria.isDone(particles, time)) {
+			// TODO ese 2 no es verdad, ya que las dummy particles de paredes aparecen y desaparecen...
+			//  son las dos dummy de esquina mas esas...como hacer para saber si van a haber o no de antemano?
+			//  o sino registarr el maximo posible y que esten en las esquinas hasta necesitarse
+			buffer.append(particles.size() + 2).append("\n").append(currentFrame + "\n");
 
 			// Calculate neighbours
 			CellIndexMethod.run(particles,
@@ -94,39 +96,84 @@ public class LennardJonesGas {
 					(int) interactionRadius + 1, //TODO watch out, may delete "+1"
 					interactionRadius);
 
-			// si está cerca de una pared le agrego una falsa, no como vecina pero como parte de la colección para la sumatoria de fuerzas
-			// Hacer una f(x) que reciba la partícula y un collection de partícula
-			System.out.println("Es decir por cada particula calcular la sumatoria de todas las fuerzas de todas las particulas alrededor que le generan a esta.");
+			// calcular la sumatoria de fuerzas de cada particula con falsas para las paredes
+			particles.stream().parallel().forEach(p -> {
+				Set<Particle> neighboursCustom = new HashSet<>(p.getNeighbours());
+//				addFakeWallParticles(p, neighboursCustom);
+				calculateForce(p, neighboursCustom);
+			});
 
-			System.out.println("Para eso ultimo usar algún integrador (el que menos memoria consuma).");
+			// calculo nueva posicion e imprimo
+			particles.stream().parallel().forEach(p -> {
+				// get new X position
+				double Ax = p.getForce().getX()/p.getMass(); // acceleration in X axis
+				double X = p.getPosition().getX() + Ax*dt; // new X position
+				// get new Y position
+				double Ay = p.getForce().getY()/p.getMass(); // acceleration in Y axis
+				double Y = p.getPosition().getY() + Ay*dt; // new Y position
 
-			System.out.println("manejar el caso de cuando interactua contra la esquina cuando cambia de box: como entre particulas hay fuerza de Potencial que repela");
-			// la esquina estará entre la interacción, representada por una partícula
+				p.setPosition(new Vector2D(X,Y));
 
-//			if ((currentFrame % printFrame) == 0) {
-////				try {
-////					writer.write(time, neighbours);
-////				} catch (IOException e) {
-////					e.printStackTrace();
-////				}
-////			}
+				// la imprimo TODO agregar aca para que solo cada printDeltaT
+				buffer.append(particleToString(p));
+			});
+
+			// agrego las dummy
+			printGridDummyParticles(buffer);
 
 			time += dt;
 			currentFrame++;
 		}
 
-
-//		eventWriter.close();
 	}
 
 
-	public static double calculatePotential(double distanceAtMinimum,
+	/**
+	 * Calcula la sumatoria de fuerzas sobre la particula
+	 *
+	 * @param particle
+	 * @param neighbours
+	 */
+	private static void calculateForce(Particle particle, Set<Particle> neighbours) {
+		Vector2D F = new Vector2D(0,0);
+		F = neighbours.stream().map(p2 -> {
+			// sacar angulo entre particulas  atam2
+			double angle = particle.getAngleWith(p2);
+
+			// calculo modulo de la fuerza
+//			double r = ;
+			double fraction = RM / particle.getDistanceBetween(p2);
+			double force = (12*e/RM)*(Math.pow(fraction,13)-Math.pow(fraction,7));
+
+			// descompongo force con angle para sacar f.x y f.y
+			return new Vector2D(force*Math.cos(angle),force*Math.sin(angle));
+		}).reduce(F, (F1, F2) -> F1.add(F2));
+
+		particle.setForce(F);
+	}
+
+
+	/**
+	 * Calcula el potencial entre dos particulas
+	 *
+	 * @param distanceAtMinimum
+	 * @param distanceBetweenParticles
+	 * @param holeDepth
+	 * @return
+	 */
+	private static double calculatePotential(double distanceAtMinimum,
 	                                        double distanceBetweenParticles,
 	                                        double holeDepth) {
-		double fraction = distanceAtMinimum / distanceBetweenParticles;
+		double fraction = RM / distanceBetweenParticles;
 		return holeDepth * (Math.pow(fraction, 12) - 2.0 * Math.pow(fraction, 6));
 	}
 
+	/**
+	 *
+	 * @param particle
+	 * @param neighbours
+	 * @return
+	 */
 	private Particle moveParticle(Particle particle, Set<Particle> neighbours) {
 		neighbours = neighbours
 				.stream()
@@ -139,6 +186,12 @@ public class LennardJonesGas {
 		return integrationMethod.updatePosition(particle, neighbours, time);
 	}
 
+	/**
+	 * Dada dos particulas, si estan en cuadrantes distintas
+	 * @param particle1
+	 * @param particle2
+	 * @return
+	 */
 	private boolean centralHoleInBetween(Particle particle1, Particle particle2) {
 		double centralHoleLowerLimit = (boxHeight / 2) - (centralHoleUnits / 2);
 		double centralHoleHigherLimit = boxHeight - centralHoleLowerLimit;
@@ -167,7 +220,13 @@ public class LennardJonesGas {
 				|| (x1 > boxWidth / 2 && x2 < boxWidth / 2));
 	}
 
-	private void addFakeWallParticles(Particle particle, Set<Particle> neighbours) {
+	/**
+	 * Agrega en neighbours set las particulas falsas necesarias
+	 *
+	 * @param particle
+	 * @param neighbours
+	 */
+	private static void addFakeWallParticles(Particle particle, Set<Particle> neighbours) {
 		double centralHoleLowerLimit = (boxHeight / 2) - (centralHoleUnits / 2);
 		double centralHoleHigherLimit = boxHeight - centralHoleLowerLimit;
 
@@ -267,7 +326,18 @@ public class LennardJonesGas {
 		}
 	}
 
-	private static void setDummyParticles(StringBuffer buff, List<Particle> particles) {
+	private static void printFirstFrame(StringBuffer buff, List<Particle> particles) {
+
+
+		// Print dummy particles to simulation output file
+		buff.append(particles.size() + 2).append("\n").append(0 + "\n");
+		printGridDummyParticles(buff);
+
+		// Print remaining particles
+		particles.forEach(particle -> buff.append(particleToString(particle)));
+	}
+
+	private static void printGridDummyParticles(StringBuffer buff) {
 		// Particles for fixing Ovito grid
 		Particle dummy1 = new Particle(-100, 0);
 		Particle dummy2 = new Particle(-101, 0);
@@ -275,12 +345,9 @@ public class LennardJonesGas {
 		dummy1.setVelocity(new Vector2D(0, 0));
 		dummy2.setPosition(new Vector2D(boxWidth, 200));
 		dummy2.setVelocity(new Vector2D(0, 0));
-
-		// Print dummy particles to simulation output file
-		buff.append(particles.size() + 2).append("\n")
-				.append(0 + "\n")
-				.append(particleToString(dummy1)).append("\n")
-				.append(particleToString(dummy2)).append("\n");
+		buff
+				.append(particleToString(dummy1))
+				.append(particleToString(dummy2));
 	}
 
 	private static String particleToString(Particle p) {
@@ -288,7 +355,7 @@ public class LennardJonesGas {
 				p.getPosition().getX() + " " +
 				p.getPosition().getY() + " " +
 				p.getVelocity().getX() + " " +
-				p.getVelocity().getY() + " "
+				p.getVelocity().getY() + " \n"
 				;
 	}
 }

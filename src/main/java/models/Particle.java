@@ -11,6 +11,16 @@ public class Particle implements Cloneable {
 	private final int id;
 	private Vector2D position;
 	private Vector2D velocity;
+
+	public Vector2D getForce() {
+		return force;
+	}
+
+	public void setForce(Vector2D force) {
+		this.force = force;
+	}
+
+	private Vector2D force;
 	private double mass;
 	private Set<Particle> neighbours;
 
@@ -88,5 +98,13 @@ public class Particle implements Cloneable {
 
 	public Set<Particle> getNeighbours() {
 		return neighbours;
+	}
+
+	public double getAngleWith(Particle p2) {
+		double angle = Math.atan2(p2.position.getY() - position.getY(), p2.position.getX() - position.getX());
+
+		if(angle < 0) angle += 360;
+
+		return angle;
 	}
 }
