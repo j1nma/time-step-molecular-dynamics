@@ -2,7 +2,7 @@ package algorithms;
 
 import models.Force;
 
-public class VelocityVerlet {
+public class VelocityVerlet implements IntegrationMethod {
 
 	private double mass;
 	private double currentPosition;
@@ -19,7 +19,7 @@ public class VelocityVerlet {
 		this.force = force;
 	}
 
-	double updatePosition(double dt) {
+	public double updatePosition(double dt) {
 		double currentAcceleration = force.F(currentPosition, currentVelocity) / mass;
 
 		double halfStepVelocity = currentVelocity + currentAcceleration * (dt / 2.0);

@@ -7,7 +7,7 @@ import models.Force;
  * @see "https://slideplayer.com/slide/11345253/ diapo 26"
  * @see "https://www.slideshare.net/keerthanpg/integration-schemes-in-molecular-dynamics CLAVEEEEEE"
  */
-public class Order5GearPredictorCorrector {
+public class Order5GearPredictorCorrector implements IntegrationMethod {
 
 	private double mass;
 	private double r, r1, r2, r3, r4, r5;
@@ -27,7 +27,7 @@ public class Order5GearPredictorCorrector {
 		this.r5 = force.F(r3, r4) / mass;
 	}
 
-	double updatePosition(double dt) {
+	public double updatePosition(double dt) {
 
 		// Predict
 		double rp, rp1, rp2, rp3, rp4, rp5;

@@ -2,7 +2,7 @@ package algorithms;
 
 import models.Force;
 
-public class Beeman {
+public class Beeman implements IntegrationMethod {
 
 	private double mass;
 	private double currentPosition;
@@ -22,7 +22,7 @@ public class Beeman {
 		this.force = force;
 	}
 
-	double updatePosition(double dt) {
+	public double updatePosition(double dt) {
 		double currentAcceleration;
 		double nextPosition;
 		double nextVelocity;
