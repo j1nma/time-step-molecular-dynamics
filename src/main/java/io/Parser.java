@@ -38,9 +38,9 @@ public class Parser {
 		}
 		numberOfParticles = sc.nextInt();
 		for (int i = 0; i < numberOfParticles; i++) {
-			double radius = sc.nextDouble();
+			double radius = sc.nextDouble(); // ignore radius, since particles are punctual (r = 0)
 			double mass = sc.nextDouble();
-			particles.add(new Particle(i + 1, radius, mass));
+			particles.add(new Particle(i + 1, mass));
 		}
 		sc.close();
 		return true;
