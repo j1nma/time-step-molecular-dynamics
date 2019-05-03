@@ -7,6 +7,8 @@ import models.Particle;
 import models.TimeCriteria;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -44,12 +46,12 @@ public class LennardJonesGas {
 
 	public static void run(
 			List<Particle> particles,
-			StringBuffer buffer,
+			BufferedWriter buffer,
 			PrintWriter eventWriter,
 			double limitTime,
 			double dt,
 			double printDeltaT,
-			String LEFT_PARTICLES_PLOT_FILE) {
+			String LEFT_PARTICLES_PLOT_FILE) throws IOException {
 
 		Particle p1 = particles.get(0);
 		Particle p2 = particles.get(1);
@@ -120,14 +122,21 @@ public class LennardJonesGas {
 //				p.setPosition(new Vector2D(X, Y));
 //
 //				// la imprimo TODO agregar aca para que solo cada printDeltaT
-////				buffer.append(particleToString(p));
+////				buffer.write();(particleToString(p));
 //			});
 
 			if ((currentFrame % printFrame) == 0) {
-				buffer.append(particles.size() + 2 + ((int) boxHeight / 5)).append("\n").append(currentFrame).append("\n");
+				buffer.write(String.valueOf(particles.size() + 2 + ((int) boxHeight / 5)));
+				buffer.newLine();
+				buffer.write(String.valueOf(currentFrame));
+				buffer.newLine();
 				printGridDummyParticles(buffer);
 				particles.stream().parallel().forEach(p -> {
-					buffer.append(particleToString(p));
+					try {
+						buffer.write(particleToString(p));
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 //					p.clearNeighbours();
 				});
 			}
@@ -317,16 +326,25 @@ public class LennardJonesGas {
 		}
 	}
 
-	private static void printFirstFrame(StringBuffer buff, List<Particle> particles) {
+	private static void printFirstFrame(BufferedWriter buff, List<Particle> particles) throws IOException {
 		// Print dummy particles to simulation output file
-		buff.append(particles.size() + 2 + ((int) boxHeight / 5)).append("\n").append(0 + "\n");
+		buff.write(particles.size() + 2 + ((int) boxHeight / 5));
+		buff.newLine();
+		buff.write("0");
+		buff.newLine();
 		printGridDummyParticles(buff);
 
 		// Print remaining particles
-		particles.forEach(particle -> buff.append(particleToString(particle)));
+		particles.forEach(particle -> {
+			try {
+				buff.write(particleToString(particle));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		});
 	}
 
-	private static void printGridDummyParticles(StringBuffer buff) {
+	private static void printGridDummyParticles(BufferedWriter buff) throws IOException {
 		// Particles for fixing Ovito grid
 		Particle dummy1 = new Particle(-100, 0);
 		Particle dummy2 = new Particle(-101, 0);
@@ -334,9 +352,8 @@ public class LennardJonesGas {
 		dummy1.setVelocity(new Vector2D(0, 0));
 		dummy2.setPosition(new Vector2D(boxWidth, 200));
 		dummy2.setVelocity(new Vector2D(0, 0));
-		buff
-				.append(particleToString(dummy1))
-				.append(particleToString(dummy2));
+		buff.write(particleToString(dummy1));
+		buff.write(particleToString(dummy2));
 
 		for (int y = 0; y <= boxHeight; ) {
 			if (y <= boxHeight / 2 - centralHoleUnits / 2 || y >= (boxHeight - boxHeight / 2 + centralHoleUnits / 2)) {

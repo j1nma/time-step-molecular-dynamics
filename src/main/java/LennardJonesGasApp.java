@@ -1,13 +1,10 @@
 import algorithms.LennardJonesGas;
 import com.google.devtools.common.options.OptionsParser;
-import io.OvitoWriter;
 import io.Parser;
 import io.SimulationOptions;
 import models.Particle;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +18,7 @@ public class LennardJonesGasApp {
 	private static final String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file.txt";
 	private static PrintWriter eventWriter;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		// Create output directories
 		new File(OUTPUT_DIRECTORY).mkdirs();
@@ -62,13 +59,16 @@ public class LennardJonesGasApp {
 	private static void runAlgorithm(List<Particle> particles,
 	                                 double limitTime,
 	                                 double deltaT,
-	                                 double printDeltaT) {
+	                                 double printDeltaT) throws IOException {
 
 		StringBuffer buffer = new StringBuffer();
 
+		FileWriter fw = new FileWriter(String.valueOf(Paths.get(OVITO_FILE)));
+		BufferedWriter writeFileBuffer = new BufferedWriter(fw);
+
 		LennardJonesGas.run(
 				particles,
-				buffer,
+				writeFileBuffer,
 				eventWriter,
 				limitTime,
 				deltaT,
@@ -76,14 +76,16 @@ public class LennardJonesGasApp {
 				LEFT_PARTICLES_PLOT_FILE
 		);
 
-		OvitoWriter<Particle> ovitoWriter;
-		try {
-			ovitoWriter = new OvitoWriter<>(Paths.get(OVITO_FILE));
-			ovitoWriter.writeBuffer(buffer);
-			ovitoWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		writeFileBuffer.close();
+
+//		OvitoWriter<Particle> ovitoWriter;
+//		try {
+//			ovitoWriter = new OvitoWriter<>(Paths.get(OVITO_FILE));
+//			ovitoWriter.writeBuffer(buffer);
+//			ovitoWriter.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private static void printUsage(OptionsParser parser) {
