@@ -53,7 +53,7 @@ public class LennardJonesGas {
 
 		Particle p1 = particles.get(0);
 		Particle p2 = particles.get(1);
-		p1.setPosition(new Vector2D(100, 50));
+		p1.setPosition(new Vector2D(100, 196));
 		p2.setPosition(new Vector2D(102, 52));
 		p1.setVelocity(new Vector2D(0, 0));
 		p2.setVelocity(new Vector2D(0, 0));
@@ -82,15 +82,10 @@ public class LennardJonesGas {
 					(int) Math.floor(Math.max(boxHeight, boxWidth) / interactionRadius),
 					interactionRadius);
 
-//			List<Particle> nextParticles = new ArrayList<>(particles.size());
-//			for (Particle particle : particles) {
-//				nextParticles.add(moveParticle(particle, particle.getNeighbours()));
-//			}
-
 //			// calcular la sumatoria de fuerzas de cada particula con falsas para las paredes
 			particles.stream().parallel().forEach(p -> {
 				Set<Particle> neighboursCustom = new HashSet<>(p.getNeighbours());
-//				addFakeWallParticles(p, neighboursCustom);
+				addFakeWallParticles(p, neighboursCustom);
 				calculateForce(p, neighboursCustom);
 			});
 
@@ -110,7 +105,7 @@ public class LennardJonesGas {
 				});
 			} else {
 				// Update position
-				particles.stream().forEach(p -> moveParticle(p));
+				particles.stream().forEach(p -> moveParticle(p, dt));
 			}
 
 			// calculo nueva posicion e imprimo
@@ -133,7 +128,7 @@ public class LennardJonesGas {
 				printGridDummyParticles(buffer);
 				particles.stream().parallel().forEach(p -> {
 					buffer.append(particleToString(p));
-					p.clearNeighbours();
+//					p.clearNeighbours();
 				});
 			}
 
@@ -159,7 +154,7 @@ public class LennardJonesGas {
 			// sacar angulo entre particulas  atam2
 			double angle = p2.getAngleWith(particle);
 
-			if (particle.getDistanceBetween(p2) < 1) {
+			if (particle.getDistanceBetween(p2) <= 0.5) {
 				int a = 0;
 			}
 
@@ -195,7 +190,7 @@ public class LennardJonesGas {
 	 * @param particle
 	 * @return
 	 */
-	private static void moveParticle(Particle particle) {
+	private static void moveParticle(Particle particle, double dt) {
 //		neighbours = neighbours
 //				.stream()
 //				.filter(n -> !centralHoleInBetween(particle, n))
@@ -204,7 +199,7 @@ public class LennardJonesGas {
 //		addFakeWallParticles(particle, neighbours);
 
 		IntegrationMethodWithNeighbours integrationMethod = particleIntegrationMethods.get(particle);
-		integrationMethod.updatePosition(particle, time);
+		integrationMethod.updatePosition(particle, dt);
 	}
 
 	/**
@@ -284,7 +279,7 @@ public class LennardJonesGas {
 		}
 
 		// Analyse down wall
-		double distanceToLowerWall = particle.getPosition().getY() - 0.0;
+		double distanceToLowerWall = particle.getPosition().getY();
 		if (distanceToLowerWall <= interactionRadius) {
 			Particle lowerWallParticle = new Particle(fakeId--, Double.POSITIVE_INFINITY);
 			lowerWallParticle.setPosition(new Vector2D(particle.getPosition().getX(), 0.0));
