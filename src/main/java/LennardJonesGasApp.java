@@ -55,22 +55,14 @@ public class LennardJonesGasApp {
 				particles,
 				options.limitTime,
 				options.deltaT,
-				options.printDeltaT,
-				options.k,
-				options.vdc,
-				options.initialPosition,
-				options.mass
+				options.printDeltaT
 		);
 	}
 
 	private static void runAlgorithm(List<Particle> particles,
 	                                 double limitTime,
 	                                 double deltaT,
-	                                 double printDeltaT,
-	                                 double k,
-	                                 double vdc,
-	                                 double initialPosition,
-	                                 double mass) {
+	                                 double printDeltaT) {
 
 		StringBuffer buffer = new StringBuffer();
 
@@ -81,10 +73,6 @@ public class LennardJonesGasApp {
 				limitTime,
 				deltaT,
 				printDeltaT,
-				k,
-				vdc,
-				initialPosition,
-				mass,
 				LEFT_PARTICLES_PLOT_FILE
 		);
 
