@@ -72,7 +72,7 @@ public class LennardJonesGas {
 
 		// Print frame
 		int currentFrame = 1;
-		printDeltaT = 0.001;
+		printDeltaT = 0.01;
 		int printFrame = (int) Math.ceil(printDeltaT / dt); // Print every 100 frames
 
 		while (!timeCriteria.isDone(particles, time)) {
@@ -328,7 +328,7 @@ public class LennardJonesGas {
 
 	private static void printFirstFrame(BufferedWriter buff, List<Particle> particles) throws IOException {
 		// Print dummy particles to simulation output file
-		buff.write(particles.size() + 2 + ((int) boxHeight / 5));
+		buff.write(String.valueOf(particles.size() + 2 + ((int) boxHeight / 5)));
 		buff.newLine();
 		buff.write("0");
 		buff.newLine();
