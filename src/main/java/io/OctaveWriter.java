@@ -27,46 +27,46 @@ public class OctaveWriter {
 		this.fileWriter.close();
 	}
 
-	public void writePositionsThroughTime(Stack<Double> timeStepValues,
-	                                      Stack<Double> analyticValues,
-	                                      Stack<Double> beemanPositionValues,
-	                                      Stack<Double> velocityVerletPositionValues,
-	                                      Stack<Double> order5GearPredictorCorrectorPositionValues,
+	public void writePositionsThroughTime(Stack<Float> timeStepValues,
+	                                      Stack<Float> analyticValues,
+	                                      Stack<Float> beemanPositionValues,
+	                                      Stack<Float> velocityVerletPositionValues,
+	                                      Stack<Float> order5GearPredictorCorrectorPositionValues,
 	                                      String positionPlotFile) throws IOException {
 		final StringBuilder builder = new StringBuilder();
 
 		// Time step values
-		builder.append("x = [").append(Double.toString(timeStepValues.pop()));
+		builder.append("x = [").append(Float.toString(timeStepValues.pop()));
 		while (!timeStepValues.isEmpty()) {
-			builder.append(", ").append(Double.toString(timeStepValues.pop()));
+			builder.append(", ").append(Float.toString(timeStepValues.pop()));
 		}
 		builder.append("];").append("\n");
 
 		// Analytic values
-		builder.append("y1 = [").append(Double.toString(analyticValues.pop()));
+		builder.append("y1 = [").append(Float.toString(analyticValues.pop()));
 		while (!analyticValues.isEmpty()) {
-			builder.append(", ").append(Double.toString(analyticValues.pop()));
+			builder.append(", ").append(Float.toString(analyticValues.pop()));
 		}
 		builder.append("];").append("\n");
 
 		// Beeman values
-		builder.append("y2 = [").append(Double.toString(beemanPositionValues.pop()));
+		builder.append("y2 = [").append(Float.toString(beemanPositionValues.pop()));
 		while (!beemanPositionValues.isEmpty()) {
-			builder.append(", ").append(Double.toString(beemanPositionValues.pop()));
+			builder.append(", ").append(Float.toString(beemanPositionValues.pop()));
 		}
 		builder.append("];").append("\n");
 
 		// Velocity verlet values
-		builder.append("y3 = [").append(Double.toString(velocityVerletPositionValues.pop()));
+		builder.append("y3 = [").append(Float.toString(velocityVerletPositionValues.pop()));
 		while (!velocityVerletPositionValues.isEmpty()) {
-			builder.append(", ").append(Double.toString(velocityVerletPositionValues.pop()));
+			builder.append(", ").append(Float.toString(velocityVerletPositionValues.pop()));
 		}
 		builder.append("];").append("\n");
 
 		// Order 5 Gear Predictor Corrector values
-		builder.append("y4 = [").append(Double.toString(order5GearPredictorCorrectorPositionValues.pop()));
+		builder.append("y4 = [").append(Float.toString(order5GearPredictorCorrectorPositionValues.pop()));
 		while (!order5GearPredictorCorrectorPositionValues.isEmpty()) {
-			builder.append(", ").append(Double.toString(order5GearPredictorCorrectorPositionValues.pop()));
+			builder.append(", ").append(Float.toString(order5GearPredictorCorrectorPositionValues.pop()));
 		}
 		builder.append("];").append("\n");
 

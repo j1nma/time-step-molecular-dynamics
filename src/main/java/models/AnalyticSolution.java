@@ -2,5 +2,5 @@ package models;
 
 public interface AnalyticSolution {
 
-	double getPosition(double k, double gamma, double mass, double t);
+	float getPosition(float k, float gamma, float mass, float t);
 }

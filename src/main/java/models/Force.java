@@ -2,5 +2,5 @@ package models;
 
 public interface Force {
 
-	double F(double position, double velocity);
+	float F(float position, float velocity);
 }

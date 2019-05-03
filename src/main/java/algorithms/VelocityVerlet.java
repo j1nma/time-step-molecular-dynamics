@@ -4,14 +4,14 @@ import models.Force;
 
 public class VelocityVerlet implements IntegrationMethod {
 
-	private double mass;
-	private double currentPosition;
-	private double currentVelocity;
+	private float mass;
+	private float currentPosition;
+	private float currentVelocity;
 	private Force force;
 
-	public VelocityVerlet(double mass,
-	                      double initialPosition,
-	                      double initialVelocity,
+	public VelocityVerlet(float mass,
+	                      float initialPosition,
+	                      float initialVelocity,
 	                      Force force) {
 		this.mass = mass;
 		this.currentPosition = initialPosition;
@@ -19,21 +19,21 @@ public class VelocityVerlet implements IntegrationMethod {
 		this.force = force;
 	}
 
-	public double updatePosition(double dt) {
-		double currentAcceleration = force.F(currentPosition, currentVelocity) / mass;
+	public float updatePosition(float dt) {
+		float currentAcceleration = force.F(currentPosition, currentVelocity) / mass;
 
-		double halfStepVelocity = currentVelocity + currentAcceleration * (dt / 2.0);
-		double nextPosition = X(dt, currentAcceleration);
+		float halfStepVelocity = (currentVelocity + currentAcceleration * (dt / 2.0F));
+		float nextPosition = X(dt, currentAcceleration);
 
-		double nextAcceleration = force.F(nextPosition, halfStepVelocity) / mass;
-		double nextVelocity = halfStepVelocity + nextAcceleration * (dt / 2.0);
+		float nextAcceleration = force.F(nextPosition, halfStepVelocity) / mass;
+		float nextVelocity = halfStepVelocity + nextAcceleration * (dt / 2.0F);
 
 		currentPosition = nextPosition;
 		currentVelocity = nextVelocity;
 		return nextPosition;
 	}
 
-	private double X(double dt, double currentAcceleration) {
-		return this.currentPosition + this.currentVelocity * dt + 0.5 * currentAcceleration * Math.pow(dt, 2);
+	private float X(float dt, float currentAcceleration) {
+		return (float) (this.currentPosition + this.currentVelocity * dt + 0.5F * currentAcceleration * Math.pow(dt, 2.0));
 	}
 }

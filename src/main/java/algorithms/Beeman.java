@@ -4,16 +4,16 @@ import models.Force;
 
 public class Beeman implements IntegrationMethod {
 
-	private double mass;
-	private double currentPosition;
-	private double currentVelocity;
-	private double previousAcceleration;
+	private float mass;
+	private float currentPosition;
+	private float currentVelocity;
+	private float previousAcceleration;
 	private Force force;
 
-	public Beeman(double mass,
-	              double initialPosition,
-	              double initialVelocity,
-	              double previousAcceleration,
+	public Beeman(float mass,
+	              float initialPosition,
+	              float initialVelocity,
+	              float previousAcceleration,
 	              Force force) {
 		this.mass = mass;
 		this.currentPosition = initialPosition;
@@ -22,11 +22,11 @@ public class Beeman implements IntegrationMethod {
 		this.force = force;
 	}
 
-	public double updatePosition(double dt) {
-		double currentAcceleration;
-		double nextPosition;
-		double nextVelocity;
-		double nextAcceleration;
+	public float updatePosition(float dt) {
+		float currentAcceleration;
+		float nextPosition;
+		float nextVelocity;
+		float nextAcceleration;
 
 		// Calculate current acceleration
 		currentAcceleration = force.F(currentPosition, currentVelocity) / mass;
@@ -46,12 +46,12 @@ public class Beeman implements IntegrationMethod {
 		return nextPosition;
 	}
 
-	private double X(double dt, double currentAcceleration) {
-		return this.currentPosition + this.currentVelocity * dt + (2.0 / 3.0) * currentAcceleration * Math.pow(dt, 2) - (1.0 / 6.0) * this.previousAcceleration * Math.pow(dt, 2);
+	private float X(float dt, float currentAcceleration) {
+		return (float) (this.currentPosition + this.currentVelocity * dt + (2 / 3F) * currentAcceleration * Math.pow(dt, 2.0) - (1 / 6F) * this.previousAcceleration * Math.pow(dt, 2.0));
 	}
 
-	private double Vcorrector(double dt, double nextAcceleration, double currentAcceleration) {
-		return this.currentVelocity + (1.0 / 3.0) * nextAcceleration * dt + (5.0 / 6.0) * currentAcceleration * dt - (1.0 / 6.0) * this.previousAcceleration * dt;
+	private float Vcorrector(float dt, float nextAcceleration, float currentAcceleration) {
+		return this.currentVelocity + (1 / 3F) * nextAcceleration * dt + (5 / 6F) * currentAcceleration * dt - (1 / 6F) * this.previousAcceleration * dt;
 	}
 
 }

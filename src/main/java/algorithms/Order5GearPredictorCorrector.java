@@ -9,13 +9,13 @@ import models.Force;
  */
 public class Order5GearPredictorCorrector implements IntegrationMethod {
 
-	private double mass;
-	private double r, r1, r2, r3, r4, r5;
+	private float mass;
+	private float r, r1, r2, r3, r4, r5;
 	private Force force;
 
-	public Order5GearPredictorCorrector(double mass,
-	                                    double initialPosition,
-	                                    double initialVelocity,
+	public Order5GearPredictorCorrector(float mass,
+	                                    float initialPosition,
+	                                    float initialVelocity,
 	                                    Force force) {
 		this.mass = mass;
 		this.r = initialPosition;
@@ -27,29 +27,29 @@ public class Order5GearPredictorCorrector implements IntegrationMethod {
 		this.r5 = force.F(r3, r4) / mass;
 	}
 
-	public double updatePosition(double dt) {
+	public float updatePosition(float dt) {
 
 		// Predict
-		double rp, rp1, rp2, rp3, rp4, rp5;
-		rp = r + (r1 * dt) + ((r2 * Math.pow(dt, 2)) / 2.0) + ((r3 * Math.pow(dt, 3.0)) / 6.0) + ((r4 * Math.pow(dt, 4.0)) / 24.0) + ((r5 * Math.pow(dt, 5.0)) / 120.0);
-		rp1 = r1 + (r2 * dt) + (r3 * Math.pow(dt, 2) / 2.0) + (r4 * Math.pow(dt, 3.0)) / 6.0 + (r5 * Math.pow(dt, 4.0)) / 24.0;
-		rp2 = r2 + (r3 * dt) + ((r4 * Math.pow(dt, 2)) / 2.0) + (r5 * Math.pow(dt, 3.0)) / 6.0;
-		rp3 = r3 + (r4 * dt) + ((r5 * Math.pow(dt, 2)) / 2.0);
+		float rp, rp1, rp2, rp3, rp4, rp5;
+		rp = (float) (r + (r1 * dt) + ((r2 * Math.pow(dt, 2)) / 2F) + ((r3 * Math.pow(dt, 3F)) / 6F) + ((r4 * Math.pow(dt, 4F)) / 24F) + ((r5 * Math.pow(dt, 5F)) / 120F));
+		rp1 = (float) (r1 + (r2 * dt) + (r3 * Math.pow(dt, 2) / 2F) + (r4 * Math.pow(dt, 3F)) / 6F + (r5 * Math.pow(dt, 4F)) / 24F);
+		rp2 = (float) (r2 + (r3 * dt) + ((r4 * Math.pow(dt, 2)) / 2F) + (r5 * Math.pow(dt, 3F)) / 6F);
+		rp3 = (float) (r3 + (r4 * dt) + ((r5 * Math.pow(dt, 2)) / 2F));
 		rp4 = r4 + (r5 * dt);
 		rp5 = r5;
 
 		// Evaluate
-		double newForce = force.F(rp, rp1);
-		double deltaAcceleration = (newForce / mass) - rp2;
-		double deltaR2 = (deltaAcceleration * Math.pow(dt, 2.0)) / 2.0;
+		float newForce = force.F(rp, rp1);
+		float deltaAcceleration = (newForce / mass) - rp2;
+		float deltaR2 = (float) ((deltaAcceleration * Math.pow(dt, 2F)) / 2F);
 
 		// Correct
-		r = rp + (3.0 / 16.0) * deltaR2;
-		r1 = rp1 + ((251.0 / 360.0) * deltaR2 * 1.0) / dt;
-		r2 = rp2 + (1.0 * deltaR2 * 2.0) / Math.pow(dt, 2);
-		r3 = rp3 + ((11.0 / 18.0) * deltaR2 * 6.0) / Math.pow(dt, 3);
-		r4 = rp4 + ((1.0 / 6.0) * deltaR2 * 24.0) / Math.pow(dt, 4);
-		r5 = rp5 + ((1.0 / 60.0) * deltaR2 * 120.0) / Math.pow(dt, 5);
+		r = rp + (3 / 16F) * deltaR2;
+		r1 = rp1 + ((251 / 360F) * deltaR2 * 1F) / dt;
+		r2 = (float) (rp2 + (1 * deltaR2 * 2F) / Math.pow(dt, 2));
+		r3 = (float) (rp3 + ((11 / 18F) * deltaR2 * 6F) / Math.pow(dt, 3));
+		r4 = (float) (rp4 + ((1 / 6F) * deltaR2 * 24F) / Math.pow(dt, 4));
+		r5 = (float) (rp5 + ((1 / 60F) * deltaR2 * 120F) / Math.pow(dt, 5));
 
 		return r;
 	}

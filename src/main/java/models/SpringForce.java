@@ -1,19 +1,17 @@
 package models;
 
-import models.Force;
-
 public class SpringForce implements Force {
 
-	private final double k;
-	private final double gamma;
+	private final float k;
+	private final float gamma;
 
-	public SpringForce(double k, double gamma) {
+	public SpringForce(float k, float gamma) {
 		this.k = k;
 		this.gamma = gamma;
 	}
 
 	@Override
-	public double F(double x, double v) {
+	public float F(float x, float v) {
 		return (-k * x - gamma * v);
 	}
 }

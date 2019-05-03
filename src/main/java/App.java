@@ -31,13 +31,13 @@ public class App {
 
 		// Run algorithm
 		TimeStepDrivenMolecularDynamics.run(
-				options.limitTime,
-				options.deltaT,
-				options.printDeltaT,
-				options.k,
-				options.vdc,
-				options.initialPosition,
-				options.mass,
+				(float) options.limitTime,
+				(float) options.deltaT,
+				(float) options.printDeltaT,
+				(float) options.k,
+				(float) options.vdc,
+				(float) options.initialPosition,
+				(float) options.mass,
 				POSITIONS_PLOT_FILE
 		);
 	}

@@ -48,7 +48,7 @@ public class SimulationOptions extends OptionsBase {
 			abbrev = 'l',
 			help = "Maximum time of simulation (s).",
 			category = "startup",
-			defaultValue = "5.0"
+			defaultValue = "5F"
 	)
 	public double limitTime;
 
@@ -75,7 +75,7 @@ public class SimulationOptions extends OptionsBase {
 			abbrev = 'm',
 			help = "Particle mass (kg).",
 			category = "startup",
-			defaultValue = "70.0"
+			defaultValue = "70F"
 	)
 	public double mass;
 
@@ -93,7 +93,7 @@ public class SimulationOptions extends OptionsBase {
 			abbrev = 'g',
 			help = "Viscous damping coefficient (kg/s).",
 			category = "startup",
-			defaultValue = "100.0"
+			defaultValue = "100F"
 	)
 	public double vdc;
 
@@ -102,7 +102,7 @@ public class SimulationOptions extends OptionsBase {
 			abbrev = 'i',
 			help = "Initial position at t=0 (m).",
 			category = "startup",
-			defaultValue = "1.0"
+			defaultValue = "1F"
 	)
 	public double initialPosition;
 }
