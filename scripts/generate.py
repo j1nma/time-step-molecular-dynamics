@@ -14,5 +14,5 @@ if not is_int_string(number_of_particles):
 generate_lennard_jones_gas_file(int(number_of_particles),
 float(area_length),
 float(initial_speed),
-float(0),
+float(1),
 float(0.1))

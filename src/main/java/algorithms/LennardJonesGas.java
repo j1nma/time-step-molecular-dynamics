@@ -53,17 +53,16 @@ public class LennardJonesGas {
 			double printDeltaT,
 			String LEFT_PARTICLES_PLOT_FILE) throws IOException {
 
-		Particle p1 = particles.get(0);
-		Particle p2 = particles.get(1);
-		p1.setPosition(new Vector2D(100, 196));
-		p2.setPosition(new Vector2D(102, 52));
-		p1.setVelocity(new Vector2D(0, 0));
-		p2.setVelocity(new Vector2D(0, 0));
-		List<Particle> test2particles = new ArrayList<>();
-		test2particles.add(p1);
-		test2particles.add(p2);
-		particles = test2particles;
-
+//		Particle p1 = particles.get(0);
+//		Particle p2 = particles.get(1);
+//		p1.setPosition(new Vector2D(100, 196));
+//		p2.setPosition(new Vector2D(102, 52));
+//		p1.setVelocity(new Vector2D(0, 0));
+//		p2.setVelocity(new Vector2D(0, 0));
+//		List<Particle> test2particles = new ArrayList<>();
+//		test2particles.add(p1);
+//		test2particles.add(p2);
+//		particles = test2particles;
 
 		// Print to buffer and set dummy particles for Ovito grid
 		printFirstFrame(buffer, particles);
@@ -107,7 +106,7 @@ public class LennardJonesGas {
 				});
 			} else {
 				// Update position
-				particles.stream().forEach(p -> moveParticle(p, dt));
+				particles.stream().parallel().forEach(p -> moveParticle(p, dt));
 			}
 
 			// calculo nueva posicion e imprimo

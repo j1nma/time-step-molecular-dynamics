@@ -61,8 +61,6 @@ public class LennardJonesGasApp {
 	                                 double deltaT,
 	                                 double printDeltaT) throws IOException {
 
-		StringBuffer buffer = new StringBuffer();
-
 		FileWriter fw = new FileWriter(String.valueOf(Paths.get(OVITO_FILE)));
 		BufferedWriter writeFileBuffer = new BufferedWriter(fw);
 
