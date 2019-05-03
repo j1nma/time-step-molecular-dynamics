@@ -105,10 +105,6 @@ public class Particle implements Cloneable {
 	}
 
 	public double getAngleWith(Particle p2) {
-		double angle = Math.atan2(p2.position.getY() - position.getY(), p2.position.getX() - position.getX());
-
-		if (angle < 0) angle += 360;
-
-		return angle;
+		return Math.atan2(p2.position.getY() - position.getY(), p2.position.getX() - position.getX());
 	}
 }
