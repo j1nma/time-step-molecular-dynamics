@@ -166,6 +166,9 @@ public class LennardJonesGas {
 				int a = 0;
 			}
 
+			// TODO CALCULATE AND PRINT WITH N WITHOUT ANGLES LIKE GERMAN TO SEE IF THEY COINCIDE
+
+
 			// calculo modulo de la fuerza
 			double fraction = RM / particle.getDistanceBetween(p2);
 			double force = (12 * e / RM) * (Math.pow(fraction, 13) - Math.pow(fraction, 7));
