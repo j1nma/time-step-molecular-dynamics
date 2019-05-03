@@ -4,8 +4,6 @@ import models.Particle;
 import models.neighbours.SumOfForces;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import java.util.Set;
-
 public class BeemanWithNeighbours implements IntegrationMethodWithNeighbours {
 
 	private Vector2D previousAcceleration;
@@ -17,14 +15,14 @@ public class BeemanWithNeighbours implements IntegrationMethodWithNeighbours {
 		this.force = force;
 	}
 
-	public Particle updatePosition(Particle particle, Set<Particle> neighbours, double dt) {
+	public void updatePosition(Particle particle, double dt) {
 		Vector2D currentAcceleration;
 		Vector2D nextPosition;
 		Vector2D nextVelocity;
 		Vector2D nextAcceleration;
 
 		// Calculate current acceleration
-		currentAcceleration = force.sumOfForces(particle, neighbours).scalarMultiply(1.0 / particle.getMass());
+		currentAcceleration = force.sumOfForces(particle, particle.getNeighbours()).scalarMultiply(1.0 / particle.getMass());
 
 		// Calculate next position
 		nextPosition = X(dt, currentAcceleration, particle);
@@ -32,7 +30,7 @@ public class BeemanWithNeighbours implements IntegrationMethodWithNeighbours {
 		particle.setPosition(nextPosition);
 
 		// Calculate next acceleration
-		nextAcceleration = force.sumOfForces(particle, neighbours).scalarMultiply(1.0 / particle.getMass());
+		nextAcceleration = force.sumOfForces(particle, particle.getNeighbours()).scalarMultiply(1.0 / particle.getMass());
 
 		// Calculate next velocity
 		nextVelocity = Vcorrector(dt, nextAcceleration, currentAcceleration, particle);
@@ -41,7 +39,6 @@ public class BeemanWithNeighbours implements IntegrationMethodWithNeighbours {
 
 		particle.setPosition(nextPosition);
 		particle.setVelocity(nextVelocity);
-		return particle;
 	}
 
 	private Vector2D X(double dt, Vector2D currentAcceleration, Particle particle) {
