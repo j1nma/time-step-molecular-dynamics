@@ -100,10 +100,14 @@ public class Particle implements Cloneable {
 		return neighbours;
 	}
 
+	public void clearNeighbours() {
+		this.neighbours = new HashSet<>();
+	}
+
 	public double getAngleWith(Particle p2) {
 		double angle = Math.atan2(p2.position.getY() - position.getY(), p2.position.getX() - position.getX());
 
-		if(angle < 0) angle += 360;
+		if (angle < 0) angle += 360;
 
 		return angle;
 	}
