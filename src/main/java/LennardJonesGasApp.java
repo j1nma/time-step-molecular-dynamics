@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-public class LennardJonesGasApp {
+class LennardJonesGasApp {
 
 	private static final String OUTPUT_DIRECTORY = "./output";
 	private static final String EX_2_DIRECTORY = OUTPUT_DIRECTORY + "/ex2";

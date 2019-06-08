@@ -7,7 +7,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 public class BeemanWithNeighbours implements IntegrationMethodWithNeighbours {
 
 	private Vector2D previousAcceleration;
-	private SumOfForces force;
+	private final SumOfForces force;
 
 	public BeemanWithNeighbours(Vector2D previousAcceleration,
 	                            SumOfForces force) {

@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class Parser {
 
-	private String staticFilePath;
+	private final String staticFilePath;
 	private String dynamicFilePath;
 	private int numberOfParticles;
 	private Queue<Particle> particles;

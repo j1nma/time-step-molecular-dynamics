@@ -1,6 +1,6 @@
 package algorithms;
 
-public interface IntegrationMethod {
+interface IntegrationMethod {
 
 	double updatePosition(double dt);
 }

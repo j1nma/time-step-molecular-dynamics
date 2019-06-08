@@ -84,7 +84,7 @@ class CellIndexMethod {
 	}
 
 	private static class CellParticle {
-		Particle particle;
+		final Particle particle;
 		Vector2D cellPosition;
 
 		CellParticle(Particle particle, Vector2D cellPosition) {

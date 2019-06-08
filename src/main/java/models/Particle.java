@@ -21,7 +21,7 @@ public class Particle implements Cloneable {
 	}
 
 	private Vector2D force;
-	private double mass;
+	private final double mass;
 	private Set<Particle> neighbours;
 
 	public Particle(int id, double mass) {

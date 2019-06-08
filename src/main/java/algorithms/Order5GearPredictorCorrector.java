@@ -9,7 +9,7 @@ import models.Force;
  */
 public class Order5GearPredictorCorrector implements IntegrationMethod {
 
-	private double mass;
+	private final double mass;
 	private double r, r1, r2, r3, r4, r5;
 	private Force force;
 

@@ -4,7 +4,7 @@ import models.Force;
 
 public class VelocityVerlet implements IntegrationMethod {
 
-	private double mass;
+	private final double mass;
 	private double currentPosition;
 	private double currentVelocity;
 	private Force force;

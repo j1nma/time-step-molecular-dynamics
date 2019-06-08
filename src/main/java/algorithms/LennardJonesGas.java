@@ -32,7 +32,7 @@ public class LennardJonesGas {
 
 	private static double distanceAtMinimum = 1.0; // rM
 	private static double holeDepth = 2;
-	private static double interactionRadius = 5;
+	private static final double interactionRadius = 5;
 	private static double boxHeight = 200;
 	private static double boxWidth = 400;
 	private static double centralHoleUnits = 10;
@@ -91,7 +91,7 @@ public class LennardJonesGas {
 
 			// Only at first frame, initialize previous position of Verlet with Euler
 			if (time == dt) {
-				particles.stream().forEach(p -> {
+				particles.forEach(p -> {
 					if (time == dt) {
 						Vector2D currentForce = p.getForce();
 						double posX = p.getPosition().getX() - dt * p.getVelocity().getX();
@@ -161,7 +161,7 @@ public class LennardJonesGas {
 
 			// descompongo force con angle para sacar f.x y f.y
 			return new Vector2D(force * Math.cos(angle), force * Math.sin(angle));
-		}).reduce(F, (F1, F2) -> F1.add(F2));
+		}).reduce(F, Vector2D::add);
 
 		// Particle knows its force at THIS frame
 		particle.setForce(F);

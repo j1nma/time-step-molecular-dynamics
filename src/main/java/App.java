@@ -5,7 +5,7 @@ import io.SimulationOptions;
 import java.io.File;
 import java.util.Collections;
 
-public class App {
+class App {
 
 	private static final String OUTPUT_DIRECTORY = "./output";
 	private static final String EX_1_DIRECTORY = OUTPUT_DIRECTORY + "/ex1";
