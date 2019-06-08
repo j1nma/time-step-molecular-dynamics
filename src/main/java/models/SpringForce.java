@@ -1,7 +1,5 @@
 package models;
 
-import models.Force;
-
 public class SpringForce implements Force {
 
 	private final double k;

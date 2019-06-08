@@ -13,9 +13,10 @@ class LennardJonesGasApp {
 
 	private static final String OUTPUT_DIRECTORY = "./output";
 	private static final String EX_2_DIRECTORY = OUTPUT_DIRECTORY + "/ex2";
+	private static final String ENERGY_FILE = EX_2_DIRECTORY + "/energy";
 	private static final String LEFT_PARTICLES_PLOT_FILE = EX_2_DIRECTORY + "/leftParticles.m";
 
-	private static final String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file.txt";
+	private static final String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file";
 	private static PrintWriter eventWriter;
 
 	public static void main(String[] args) throws IOException {
@@ -61,13 +62,16 @@ class LennardJonesGasApp {
 	                                 double deltaT,
 	                                 double printDeltaT) throws IOException {
 
-		FileWriter fw = new FileWriter(String.valueOf(Paths.get(OVITO_FILE)));
+		FileWriter fw = new FileWriter(String.valueOf(Paths.get(OVITO_FILE + "_dT=" + deltaT + ".txt")));
 		BufferedWriter writeFileBuffer = new BufferedWriter(fw);
+
+		FileWriter fw2= new FileWriter(String.valueOf(Paths.get(ENERGY_FILE + "_dT=" + deltaT + ".txt")));
+		BufferedWriter energyFileBuffer = new BufferedWriter(fw2);
 
 		LennardJonesGas.run(
 				particles,
 				writeFileBuffer,
-				eventWriter,
+				energyFileBuffer,
 				limitTime,
 				deltaT,
 				printDeltaT,

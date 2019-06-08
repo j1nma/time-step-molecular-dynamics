@@ -9,19 +9,11 @@ import java.util.Set;
 public class Particle implements Cloneable {
 
 	private final int id;
+	private final double mass;
+	private double potentialEnergy;
 	private Vector2D position;
 	private Vector2D velocity;
-
-	public Vector2D getForce() {
-		return force;
-	}
-
-	public void setForce(Vector2D force) {
-		this.force = force;
-	}
-
 	private Vector2D force;
-	private final double mass;
 	private Set<Particle> neighbours;
 
 	public Particle(int id, double mass) {
@@ -106,5 +98,21 @@ public class Particle implements Cloneable {
 
 	public double getAngleWith(Particle p2) {
 		return Math.atan2(p2.position.getY() - position.getY(), p2.position.getX() - position.getX());
+	}
+
+	public Vector2D getForce() {
+		return force;
+	}
+
+	public void setForce(Vector2D force) {
+		this.force = force;
+	}
+
+	public double getPotentialEnergy() {
+		return potentialEnergy;
+	}
+
+	public void setPotentialEnergy(double potentialEnergy) {
+		this.potentialEnergy = potentialEnergy;
 	}
 }

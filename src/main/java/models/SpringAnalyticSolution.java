@@ -1,7 +1,5 @@
 package models;
 
-import models.AnalyticSolution;
-
 public class SpringAnalyticSolution implements AnalyticSolution {
 
 	@Override
