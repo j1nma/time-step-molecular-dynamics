@@ -1,6 +1,9 @@
-import math  
+import math
+import sys
 
-data = open("./output/ovito_file.txt", "r").readlines()
+dt = sys.argv[1]
+
+data = open("./output/ovito_file_dT={dt}.txt".format(dt = dt), "r").readlines()
 N = int(data[0])
 
 output = []
@@ -29,6 +32,6 @@ for line in data:
 		del data[c]
 		output.append(data[c].rstrip())
 		del data[c]
-f = open("./output/color_ovito_file.txt", "w")
+f = open("./output/color_ovito_file_dT={dt}.txt".format(dt = dt), "w")
 f.write("\n".join(output))
 f.close()
