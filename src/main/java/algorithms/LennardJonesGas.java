@@ -69,10 +69,9 @@ public class LennardJonesGas {
 
 		Criteria timeCriteria = new TimeCriteria(limitTime);
 
-		// Print frame
+		// Print every 60 frames
 		int currentFrame = 1;
-		printDeltaT = 0.01;
-		int printFrame = (int) Math.ceil(printDeltaT / dt); // Print every 100 frames
+		int printFrame = (int) Math.ceil(printDeltaT / dt);
 
 		while (!timeCriteria.isDone(particles, time)) {
 			time += dt;
