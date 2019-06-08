@@ -13,9 +13,9 @@ import java.util.*;
 public class Parser {
 
 	private final String staticFilePath;
-	private String dynamicFilePath;
+	private final String dynamicFilePath;
 	private int numberOfParticles;
-	private Queue<Particle> particles;
+	private final Queue<Particle> particles;
 
 	public Parser(String staticFilePath, String dynamicFilePath) {
 		this.staticFilePath = staticFilePath;

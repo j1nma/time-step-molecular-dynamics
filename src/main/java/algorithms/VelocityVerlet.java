@@ -7,7 +7,7 @@ public class VelocityVerlet implements IntegrationMethod {
 	private final double mass;
 	private double currentPosition;
 	private double currentVelocity;
-	private Force force;
+	private final Force force;
 
 	public VelocityVerlet(double mass,
 	                      double initialPosition,

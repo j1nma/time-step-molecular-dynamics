@@ -8,7 +8,7 @@ public class Beeman implements IntegrationMethod {
 	private double currentPosition;
 	private double currentVelocity;
 	private double previousAcceleration;
-	private Force force;
+	private final Force force;
 
 	public Beeman(double mass,
 	              double initialPosition,

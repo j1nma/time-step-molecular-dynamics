@@ -11,7 +11,7 @@ public class Order5GearPredictorCorrector implements IntegrationMethod {
 
 	private final double mass;
 	private double r, r1, r2, r3, r4, r5;
-	private Force force;
+	private final Force force;
 
 	public Order5GearPredictorCorrector(double mass,
 	                                    double initialPosition,

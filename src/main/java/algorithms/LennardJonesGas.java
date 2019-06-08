@@ -33,11 +33,11 @@ public class LennardJonesGas {
 	private static double distanceAtMinimum = 1.0; // rM
 	private static double holeDepth = 2;
 	private static final double interactionRadius = 5;
-	private static double boxHeight = 200;
-	private static double boxWidth = 400;
-	private static double centralHoleUnits = 10;
-	private static double RM = 1.0;
-	private static double e = 2.0;
+	private static final double boxHeight = 200;
+	private static final double boxWidth = 400;
+	private static final double centralHoleUnits = 10;
+	private static final double RM = 1.0;
+	private static final double e = 2.0;
 
 	// Initial State
 	private static double time = 0.0;
