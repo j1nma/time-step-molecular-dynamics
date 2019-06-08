@@ -111,21 +111,6 @@ public class LennardJonesGas {
 				});
 			}
 
-			// calculo nueva posicion e imprimo
-//			particles.stream().parallel().forEach(p -> {
-//				// get new X position
-//				double Ax = p.getForce().getX() / p.getMass(); // acceleration in X axis
-//				double X = p.getPosition().getX() + Ax * dt; // new X position
-//				// get new Y position
-//				double Ay = p.getForce().getY() / p.getMass(); // acceleration in Y axis
-//				double Y = p.getPosition().getY() + Ay * dt; // new Y position
-//
-//				p.setPosition(new Vector2D(X, Y));
-//
-//				// la imprimo TODO agregar aca para que solo cada printDeltaT
-////				buffer.write();(particleToString(p));
-//			});
-
 			if ((currentFrame % printFrame) == 0)
 				printFrame(buffer, energyBuffer, particles);
 

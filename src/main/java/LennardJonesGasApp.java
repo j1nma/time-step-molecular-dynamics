@@ -4,7 +4,10 @@ import io.Parser;
 import io.SimulationOptions;
 import models.Particle;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +20,6 @@ class LennardJonesGasApp {
 	private static final String LEFT_PARTICLES_PLOT_FILE = EX_2_DIRECTORY + "/leftParticles.m";
 
 	private static final String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file";
-	private static PrintWriter eventWriter;
 
 	public static void main(String[] args) throws IOException {
 
@@ -45,9 +47,6 @@ class LennardJonesGasApp {
 		if (!staticAndDynamicParser.parse()) return;
 		List<Particle> particles = staticAndDynamicParser.getParticles();
 
-		// Initialize file writers
-//		eventWriter = new PrintWriter(new FileWriter("TODO GAS FILE")); //TODO CORRECT FILE NAME
-
 		// Run algorithm
 		runAlgorithm(
 				particles,
@@ -65,7 +64,7 @@ class LennardJonesGasApp {
 		FileWriter fw = new FileWriter(String.valueOf(Paths.get(OVITO_FILE + "_dT=" + deltaT + ".txt")));
 		BufferedWriter writeFileBuffer = new BufferedWriter(fw);
 
-		FileWriter fw2= new FileWriter(String.valueOf(Paths.get(ENERGY_FILE + "_dT=" + deltaT + ".txt")));
+		FileWriter fw2 = new FileWriter(String.valueOf(Paths.get(ENERGY_FILE + "_dT=" + deltaT + ".txt")));
 		BufferedWriter energyFileBuffer = new BufferedWriter(fw2);
 
 		LennardJonesGas.run(
@@ -78,16 +77,10 @@ class LennardJonesGasApp {
 				LEFT_PARTICLES_PLOT_FILE
 		);
 
+		// Closing buffers
 		writeFileBuffer.close();
+		energyFileBuffer.close();
 
-//		OvitoWriter<Particle> ovitoWriter;
-//		try {
-//			ovitoWriter = new OvitoWriter<>(Paths.get(OVITO_FILE));
-//			ovitoWriter.writeBuffer(buffer);
-//			ovitoWriter.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 	}
 
 	private static void printUsage(OptionsParser parser) {
