@@ -9,9 +9,9 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Consider a Lennard-Jones gas formed by particles whose dimensionless parameters are
@@ -48,7 +48,7 @@ public class LennardJonesGas {
 	public static void run(
 			List<Particle> particles,
 			BufferedWriter buffer,
-			PrintWriter eventWriter,
+			BufferedWriter energyBuffer,
 			double limitTime,
 			double dt,
 			double printDeltaT,
@@ -66,7 +66,7 @@ public class LennardJonesGas {
 //		particles = test2particles;
 
 		// Print first frame
-		printFrame(buffer, particles);
+		printFrame(buffer, energyBuffer, particles);
 
 		Criteria timeCriteria = new TimeCriteria(limitTime);
 
@@ -127,7 +127,7 @@ public class LennardJonesGas {
 //			});
 
 			if ((currentFrame % printFrame) == 0)
-				printFrame(buffer, particles);
+				printFrame(buffer, energyBuffer, particles);
 
 			System.out.println("Current progress: " + 100 * (time / limitTime));
 			currentFrame++;
@@ -138,49 +138,51 @@ public class LennardJonesGas {
 
 	/**
 	 * Calcula la sumatoria de fuerzas sobre la particula
-	 *
-	 * @param particle
-	 * @param neighbours
 	 */
 	private static void calculateForce(Particle particle, Set<Particle> neighbours) {
+		AtomicReference<Double> potentialEnergy = new AtomicReference<>(0.0);
+
+		// Particle force calculation
 		Vector2D F = new Vector2D(0, 0);
 		F = neighbours.stream().map(p2 -> {
-			// sacar angulo entre particulas  atam2
-			double angle = p2.getAngleWith(particle);
+			// Calculate distance between centers
+			double distance = particle.getPosition().distance(p2.getPosition());
 
-			if (particle.getDistanceBetween(p2) <= 0.5) {
-				int a = 0;
-			}
-
-			// TODO CALCULATE AND PRINT WITH N WITHOUT ANGLES LIKE GERMAN TO SEE IF THEY COINCIDE
-
-
-			// calculo modulo de la fuerza
+			// Calculate force module
 			double fraction = RM / particle.getDistanceBetween(p2);
 			double force = (12 * e / RM) * (Math.pow(fraction, 13) - Math.pow(fraction, 7));
 
-			// descompongo force con angle para sacar f.x y f.y
-			return new Vector2D(force * Math.cos(angle), force * Math.sin(angle));
+			// Calculate x component of contact unit vector e
+			double Enx = (p2.getPosition().getX() - particle.getPosition().getX()) / distance;
+
+			// Calculate y component of contact unit vector e
+			double Eny = (p2.getPosition().getY() - particle.getPosition().getY()) / distance;
+
+			double Fx = -force * Enx;
+			double Fy = -force * Eny;
+
+			potentialEnergy.accumulateAndGet(calculatePotential(particle.getDistanceBetween(p2)), (x, y) -> x + y);
+
+			return new Vector2D(Fx, Fy);
 		}).reduce(F, Vector2D::add);
 
 		// Particle knows its force at THIS frame
 		particle.setForce(F);
+
+		// Set particle's potential energy
+		particle.setPotentialEnergy(potentialEnergy.get());
 	}
 
 
 	/**
 	 * Calcula el potencial entre dos particulas
 	 *
-	 * @param distanceAtMinimum
 	 * @param distanceBetweenParticles
-	 * @param holeDepth
 	 * @return
 	 */
-	private static double calculatePotential(double distanceAtMinimum,
-	                                         double distanceBetweenParticles,
-	                                         double holeDepth) {
+	private static double calculatePotential(double distanceBetweenParticles) {
 		double fraction = RM / distanceBetweenParticles;
-		return holeDepth * (Math.pow(fraction, 12) - 2.0 * Math.pow(fraction, 6));
+		return e * (Math.pow(fraction, 12) - 2.0 * Math.pow(fraction, 6));
 	}
 
 	/**
@@ -307,7 +309,7 @@ public class LennardJonesGas {
 		}
 	}
 
-	private static void printFrame(BufferedWriter buffer, List<Particle> particles) throws IOException {
+	private static void printFrame(BufferedWriter buffer, BufferedWriter energyBuffer, List<Particle> particles) throws IOException {
 		buffer.write(String.valueOf(particles.size()));
 		buffer.newLine();
 		buffer.write("t=");
@@ -323,6 +325,7 @@ public class LennardJonesGas {
 				e1.printStackTrace();
 			}
 		});
+
 	}
 
 	private static String particleToString(Particle p) {
