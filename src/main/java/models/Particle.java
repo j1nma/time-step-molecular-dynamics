@@ -96,10 +96,6 @@ public class Particle implements Cloneable {
 		this.neighbours = new HashSet<>();
 	}
 
-	public double getAngleWith(Particle p2) {
-		return Math.atan2(p2.position.getY() - position.getY(), p2.position.getX() - position.getX());
-	}
-
 	public Vector2D getForce() {
 		return force;
 	}
