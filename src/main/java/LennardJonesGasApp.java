@@ -16,10 +16,9 @@ class LennardJonesGasApp {
 
 	private static final String OUTPUT_DIRECTORY = "./output";
 	private static final String EX_2_DIRECTORY = OUTPUT_DIRECTORY + "/ex2";
-	private static final String ENERGY_FILE = EX_2_DIRECTORY + "/energy";
 	private static final String LEFT_PARTICLES_PLOT_FILE = EX_2_DIRECTORY + "/leftParticles.m";
-
-	private static final String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file";
+	private static String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file";
+	private static String ENERGY_FILE = EX_2_DIRECTORY + "/energy";
 
 	public static void main(String[] args) throws IOException {
 
@@ -46,6 +45,12 @@ class LennardJonesGasApp {
 		Parser staticAndDynamicParser = new Parser(options.staticFile, options.dynamicFile);
 		if (!staticAndDynamicParser.parse()) return;
 		List<Particle> particles = staticAndDynamicParser.getParticles();
+
+		// Create N output directory
+		String energyNDirectory = EX_2_DIRECTORY + "/N=" + particles.size();
+		new File(energyNDirectory).mkdirs();
+		OVITO_FILE = energyNDirectory + "/ovito_file";
+		ENERGY_FILE = energyNDirectory + "/energy";
 
 		// Run algorithm
 		runAlgorithm(

@@ -1,9 +1,10 @@
 import math
 import sys
 
-dt = sys.argv[1]
+N = sys.argv[1]
+dt = sys.argv[2]
 
-data = open("./output/ovito_file_dT={dt}.txt".format(dt = dt), "r").readlines()
+data = open("./output/ex2/N={N}/ovito_file_dT={dt}.txt".format(N = N, dt = dt), "r").readlines()
 N = int(data[0])
 
 output = []
@@ -32,6 +33,6 @@ for line in data:
 		del data[c]
 		output.append(data[c].rstrip())
 		del data[c]
-f = open("./output/color_ovito_file_dT={dt}.txt".format(dt = dt), "w")
+f = open("./output/ex2/N={N}/color_ovito_file_dT={dt}.txt".format(N = N, dt = dt), "w")
 f.write("\n".join(output))
 f.close()

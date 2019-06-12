@@ -32,7 +32,7 @@ public class Particle implements Cloneable {
 		this.neighbours.add(neighbour);
 	}
 
-	private double getKineticEnergy() {
+	public double getKineticEnergy() {
 		return 0.5 * mass * velocity.getNormSq();
 	}
 
