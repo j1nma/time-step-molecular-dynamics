@@ -158,7 +158,6 @@ public class LennardJonesGas {
 		particle.setPotentialEnergy(potentialEnergy.get());
 	}
 
-
 	/**
 	 * Calcula el potencial entre dos particulas
 	 *
@@ -302,6 +301,8 @@ public class LennardJonesGas {
 		buffer.write("s");
 		buffer.newLine();
 
+		AtomicReference<Double> totalEnergy = new AtomicReference<>(0.0);
+
 		// Print remaining particles
 		particles.forEach(particle -> {
 			try {
@@ -309,8 +310,16 @@ public class LennardJonesGas {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+
+			totalEnergy.accumulateAndGet(particle.getPotentialEnergy() + particle.getKineticEnergy(), (x, y) -> x + y);
 		});
 
+		try {
+			energyBuffer.write(String.valueOf(totalEnergy.get()));
+			energyBuffer.newLine();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	private static String particleToString(Particle p) {
