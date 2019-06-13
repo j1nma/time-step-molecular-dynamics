@@ -16,9 +16,9 @@ class LennardJonesGasApp {
 
 	private static final String OUTPUT_DIRECTORY = "./output";
 	private static final String EX_2_DIRECTORY = OUTPUT_DIRECTORY + "/ex2";
-	private static final String LEFT_PARTICLES_PLOT_FILE = EX_2_DIRECTORY + "/leftParticles.m";
 	private static String OVITO_FILE = OUTPUT_DIRECTORY + "/ovito_file";
 	private static String ENERGY_FILE = EX_2_DIRECTORY + "/energy";
+	private static String LEFT_PARTICLES_FILE = EX_2_DIRECTORY + "/left";
 
 	public static void main(String[] args) throws IOException {
 
@@ -51,6 +51,7 @@ class LennardJonesGasApp {
 		new File(energyNDirectory).mkdirs();
 		OVITO_FILE = energyNDirectory + "/ovito_file";
 		ENERGY_FILE = energyNDirectory + "/energy";
+		LEFT_PARTICLES_FILE = energyNDirectory + "/left";
 
 		// Run algorithm
 		runAlgorithm(
@@ -72,20 +73,23 @@ class LennardJonesGasApp {
 		FileWriter fw2 = new FileWriter(String.valueOf(Paths.get(ENERGY_FILE + "_dT=" + deltaT + ".txt")));
 		BufferedWriter energyFileBuffer = new BufferedWriter(fw2);
 
+		FileWriter fw3 = new FileWriter(String.valueOf(Paths.get(LEFT_PARTICLES_FILE + "_dT=" + deltaT + ".txt")));
+		BufferedWriter leftParticlesFileBuffer = new BufferedWriter(fw3);
+
 		LennardJonesGas.run(
 				particles,
 				writeFileBuffer,
 				energyFileBuffer,
+				leftParticlesFileBuffer,
 				limitTime,
 				deltaT,
-				printDeltaT,
-				LEFT_PARTICLES_PLOT_FILE
+				printDeltaT
 		);
 
 		// Closing buffers
 		writeFileBuffer.close();
 		energyFileBuffer.close();
-
+		leftParticlesFileBuffer.close();
 	}
 
 	private static void printUsage(OptionsParser parser) {
