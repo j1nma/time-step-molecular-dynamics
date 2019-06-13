@@ -4,8 +4,29 @@ import sys
 N = sys.argv[1]
 dt = sys.argv[2]
 
-data = open("./output/ex2/N={N}/ovito_file_dT={dt}.txt".format(N = N, dt = dt), "r").readlines()
-N = int(data[0])
+data0 = open("./output/ex2/N={N}/ovito_file_dT={dt}.txt".format(N = N, dt = dt), "r").readlines()
+N = int(data0[0])
+
+initial_size = len(data0)
+
+print(initial_size)
+
+cut = (initial_size*3//4)
+
+print(cut)
+
+i = 0
+for line in data0[cut:]:
+    line = line.rstrip()
+    if (line == str(N)):
+        break;
+    i = i + 1
+
+print(i)
+
+print(data0[cut + i])
+
+data = data0[cut+i:]
 
 output = []
 
@@ -28,6 +49,7 @@ for line in data:
 	output.append(line)
 	# output = output + line
 	c = c + 1
+	print("Progress: {p}".format(p = 100 * (c/(initial_size-cut))))
 	if (c % N == 0) and (c != len(data)):
 		output.append(data[c].rstrip())
 		del data[c]
