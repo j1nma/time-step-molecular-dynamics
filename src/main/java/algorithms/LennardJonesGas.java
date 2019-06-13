@@ -4,6 +4,7 @@ import algorithms.neighbours.IntegrationMethodWithNeighbours;
 import algorithms.neighbours.VerletWithNeighbours;
 import models.Criteria;
 import models.Particle;
+import models.StabilizedBoxCriteria;
 import models.TimeCriteria;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -30,8 +31,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class LennardJonesGas {
 
-	private static double distanceAtMinimum = 1.0; // rM
-	private static double holeDepth = 2;
 	private static final double interactionRadius = 5;
 	private static final double boxHeight = 200;
 	private static final double boxWidth = 400;
@@ -49,25 +48,26 @@ public class LennardJonesGas {
 			List<Particle> particles,
 			BufferedWriter buffer,
 			BufferedWriter energyBuffer,
+			BufferedWriter leftBuffer,
 			double limitTime,
 			double dt,
-			double printDeltaT,
-			String LEFT_PARTICLES_PLOT_FILE) throws IOException {
+			double printDeltaT) throws IOException {
 
 //		Particle p1 = particles.get(0);
 //		Particle p2 = particles.get(1);
 //		p1.setPosition(new Vector2D(100, 196));
-//		p2.setPosition(new Vector2D(102, 52));
-//		p1.setVelocity(new Vector2D(0, 0));
-//		p2.setVelocity(new Vector2D(0, 0));
+//		p2.setPosition(new Vector2D(100, 194));
+//		p1.setVelocity(new Vector2D(-7.596971994059741, -6.50276991146634));
+//		p2.setVelocity(new Vector2D(-1.5045248019520396, -9.886172420118474));
 //		List<Particle> test2particles = new ArrayList<>();
 //		test2particles.add(p1);
 //		test2particles.add(p2);
 //		particles = test2particles;
 
 		// Print first frame
-		printFrame(buffer, energyBuffer, particles);
+		printFrame(buffer, energyBuffer, leftBuffer, particles);
 
+		StabilizedBoxCriteria stabilizedBoxCriteria = new StabilizedBoxCriteria(0.5, boxWidth / 2);
 		Criteria timeCriteria = new TimeCriteria(limitTime);
 
 		// Print every 60 frames
@@ -75,6 +75,7 @@ public class LennardJonesGas {
 		int printFrame = (int) Math.ceil(printDeltaT / dt);
 
 		while (!timeCriteria.isDone(particles, time)) {
+//		while (!stabilizedBoxCriteria.isDone(particles)) {
 			time += dt;
 
 			// Calculate neighbours
@@ -112,14 +113,13 @@ public class LennardJonesGas {
 			}
 
 			if ((currentFrame % printFrame) == 0)
-				printFrame(buffer, energyBuffer, particles);
+				printFrame(buffer, energyBuffer, leftBuffer, particles);
 
-			System.out.println("Current progress: " + 100 * (time / limitTime));
+//			System.out.println("Current progress: " + 100 * (time / limitTime));
 			currentFrame++;
 		}
 
 	}
-
 
 	/**
 	 * Calcula la sumatoria de fuerzas sobre la particula
@@ -134,7 +134,7 @@ public class LennardJonesGas {
 			double distance = particle.getPosition().distance(p2.getPosition());
 
 			// Calculate force module
-			double fraction = RM / particle.getDistanceBetween(p2);
+			double fraction = RM / distance;
 			double force = (12 * e / RM) * (Math.pow(fraction, 13) - Math.pow(fraction, 7));
 
 			// Calculate x component of contact unit vector e
@@ -146,7 +146,7 @@ public class LennardJonesGas {
 			double Fx = -force * Enx;
 			double Fy = -force * Eny;
 
-			potentialEnergy.accumulateAndGet(calculatePotential(particle.getDistanceBetween(p2)), (x, y) -> x + y);
+			potentialEnergy.accumulateAndGet(calculatePotential(distance), (x, y) -> x + y);
 
 			return new Vector2D(Fx, Fy);
 		}).reduce(F, Vector2D::add);
@@ -176,41 +176,6 @@ public class LennardJonesGas {
 	private static void moveParticle(Particle particle, double dt) {
 		IntegrationMethodWithNeighbours integrationMethod = particleIntegrationMethods.get(particle);
 		integrationMethod.updatePosition(particle, dt);
-	}
-
-	/**
-	 * Dada dos particulas, si estan en cuadrantes distintas
-	 *
-	 * @param particle1
-	 * @param particle2
-	 * @return
-	 */
-	private static boolean centralHoleInBetween(Particle particle1, Particle particle2) {
-		double centralHoleLowerLimit = (boxHeight / 2) - (centralHoleUnits / 2);
-		double centralHoleHigherLimit = boxHeight - centralHoleLowerLimit;
-
-		double x1 = particle1.getPosition().getX();
-		double y1 = particle1.getPosition().getY();
-		double x2 = particle2.getPosition().getX();
-		double y2 = particle2.getPosition().getY();
-
-		// Both particles at left or right, one above the other
-		if (x1 == x2) return false;
-
-		// Calculate line between particles' positions
-		double m = (y2 - y1) / (x2 - x1);
-		double b = y1 - m * x1;
-
-		// Calculate central hole's height is in that line
-		double xCentralHole = boxWidth / 2;
-		double yCentralHoleBetweenParticles = m * xCentralHole + b;
-
-		// Return true if central hole's y is between the gap
-		// And particles are at different sides
-		return yCentralHoleBetweenParticles < centralHoleHigherLimit
-				&& yCentralHoleBetweenParticles > centralHoleLowerLimit
-				&& ((x1 < boxWidth / 2 && x2 > boxWidth / 2)
-				|| (x1 > boxWidth / 2 && x2 < boxWidth / 2));
 	}
 
 	/**
@@ -293,15 +258,19 @@ public class LennardJonesGas {
 		}
 	}
 
-	private static void printFrame(BufferedWriter buffer, BufferedWriter energyBuffer, List<Particle> particles) throws IOException {
+	private static void printFrame(BufferedWriter buffer,
+	                               BufferedWriter energyBuffer,
+	                               BufferedWriter leftBuffer,
+	                               List<Particle> particles) throws IOException {
 		buffer.write(String.valueOf(particles.size()));
 		buffer.newLine();
 		buffer.write("t=");
-		buffer.write(String.valueOf(new DecimalFormat("#.###").format(time)));
+		buffer.write(String.valueOf(new DecimalFormat("#.#").format(time)));
 		buffer.write("s");
 		buffer.newLine();
 
 		AtomicReference<Double> totalEnergy = new AtomicReference<>(0.0);
+		AtomicReference<Integer> leftParticles = new AtomicReference<>(0);
 
 		// Print remaining particles
 		particles.forEach(particle -> {
@@ -312,6 +281,9 @@ public class LennardJonesGas {
 			}
 
 			totalEnergy.accumulateAndGet(particle.getPotentialEnergy() + particle.getKineticEnergy(), (x, y) -> x + y);
+
+			if (particle.getPosition().getX() < boxWidth / 2)
+				leftParticles.accumulateAndGet(1, (x, y) -> x + y);
 		});
 
 		try {
@@ -320,6 +292,15 @@ public class LennardJonesGas {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+
+		try {
+			leftBuffer.write(time + " " + String.valueOf(leftParticles.get()));
+			leftBuffer.newLine();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		System.out.println("Left particles: " + String.valueOf(leftParticles.get()));
 	}
 
 	private static String particleToString(Particle p) {
