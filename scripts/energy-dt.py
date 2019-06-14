@@ -6,10 +6,19 @@ from oct2py import octave
 import sys
 octave.addpath('./scripts/')
 
+def t_or_f(arg):
+    ua = str(arg).upper()
+    if 'TRUE'.startswith(ua):
+       return True
+    elif 'FALSE'.startswith(ua):
+       return False
+    else:
+       pass
+
 if len(sys.argv) != 2:
     sys.exit("Arguments missing. Exit.")
 
-graph = sys.argv[1]
+graph =  t_or_f(sys.argv[1])
 
 N = 1000
 L = 200
@@ -30,9 +39,6 @@ if not graph:
 	 		L = L,
 	 		initial_speed = initial_speed
 	 		));
-else:
-	func = 'energy(' + str(N) + ',\"' + str(0.003) + '\")';
-	octave.eval(func);
 
 processes = []
 
