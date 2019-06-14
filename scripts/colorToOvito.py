@@ -39,6 +39,8 @@ del data[0]
 output.append(data[0].rstrip())
 del data[0]
 
+max_v = 0.0
+
 c = 0
 for line in data:
 	line = line.rstrip()
@@ -48,6 +50,8 @@ for line in data:
 	v = math.sqrt(vx*vx + vy*vy)
 	line = "%s %s" % (line, v)
 	output.append(line)
+	if v > max_v:
+	    max_v = v
 	c = c + 1
 	if (c % N == 0) and (c != len(data)):
 	    output.append(data[c].rstrip())
@@ -59,3 +63,4 @@ for line in data:
 f = open("./output/ex2/N={N}/color_ovito_file_dT={dt}.txt".format(N = N, dt = dt), "w")
 f.write("\n".join(output))
 f.close()
+print('max speed: {max_v}'.format(max_v = max_v))
