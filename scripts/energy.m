@@ -5,8 +5,8 @@ function energy(N, dt)
     energy = [];
     # Read file
     while (!feof(fid))
-            % Parse out energy
-            energy = [energy, str2num(fgetl(fid))];
+        % Parse out energy
+        energy = [energy, str2num(fgetl(fid))];
     endwhile
 
     fclose(fid);
@@ -14,12 +14,11 @@ function energy(N, dt)
     print_dt = 0.016666667;
 
     props = {"marker", '.', 'LineStyle', 'none'};
-    %log10(energy / energy(1))
     h = plot((1:size(energy, 2)) * print_dt, energy / energy(1), sprintf(";dT = %s s;", dt));
     %set(h, props{:})
     xlabel("Tiempo [s]");
     ylabel("Energía Total_{t} / Energía_{0} [J]");
-    xlim([0, 5])
+    %xlim([0, 5])
     legend("location", "eastoutside");
     grid on
 

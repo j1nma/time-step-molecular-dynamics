@@ -1,9 +1,15 @@
 import os
 import subprocess
 import numpy
-from numpy import arange, zeros
+from numpy import arange
 from oct2py import octave
+import sys
 octave.addpath('./scripts/')
+
+if len(sys.argv) != 2:
+    sys.exit("Arguments missing. Exit.")
+
+graph = sys.argv[1]
 
 N = 1000
 L = 200
@@ -15,26 +21,25 @@ initial_dt = 0.0025
 
 times = 6
 
-graph = True
-
 if not graph:
 	os.system('mvn clean package')
 
 	# Generate random Dynamic and Static files. m = 0.1 kg. r = 1m.
-	# os.system('python3 ./scripts/generate.py {N} {L} {initial_speed}'.format(
-	# 		N = N, 
-	# 		L = L,
-	# 		initial_speed = initial_speed
-	# 		));
+	os.system('python3 ./scripts/generate.py {N} {L} {initial_speed}'.format(
+	 		N = N, 
+	 		L = L,
+	 		initial_speed = initial_speed
+	 		));
+else:
+	func = 'energy(' + str(N) + ',\"' + str(0.003) + '\")';
+	octave.eval(func);
 
 processes = []
-
-func = 'energy(' + str(N) + ',\"' + str(0.003) + '\")';
-octave.eval(func);
 
 # For each dt value
 for k in arange(0, times):
 	current_dt = format(initial_dt / (2**k), '.{f}f'.format(f = 4 + k));
+	print(current_dt)
 	if not graph:
 		p = subprocess.Popen(['java', '-jar', './target/time-step-molecular-dynamics-1.0-SNAPSHOT.jar',
 			'--lennardJonesGas=true',
@@ -46,9 +51,6 @@ for k in arange(0, times):
 	else:
 		func = 'energy(' + str(N) + ',\"' + str(current_dt) + '\")';
 		octave.eval(func);
-	# if graph:
-		# func = 'energy(' + str(N) + ',\"' + dT + '\")';
-		# octave.eval(func);
 if not graph:
     # Wait
     for process in processes:
