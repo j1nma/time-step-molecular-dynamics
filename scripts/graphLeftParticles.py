@@ -5,10 +5,19 @@ from numpy import arange
 from oct2py import octave
 import sys
 
+def t_or_f(arg):
+    ua = str(arg).upper()
+    if 'TRUE'.startswith(ua):
+       return True
+    elif 'FALSE'.startswith(ua):
+       return False
+    else:
+       pass
+
 if len(sys.argv) != 2:
     sys.exit("Arguments missing. Exit.")
 
-graph = sys.argv[1]
+graph = t_or_f(sys.argv[1])
 
 octave.addpath('./scripts/')
 
@@ -16,7 +25,7 @@ N = 1000
 L = 200
 initial_speed = 10
 
-limitTime = 120.0
+limitTime = -1
 limitFraction = 0.56
 
 dt = 0.00125
@@ -25,6 +34,11 @@ times = 1
 
 if not graph:
 	os.system('mvn clean package')
+
+	print('Generating N={N} L={L} initial_speed={initial_speed}...'.format(
+        N = N,
+        L = L,
+        initial_speed = initial_speed))
 
 	# Generate random Dynamic and Static files. m = 0.1 kg. r = 1m.
 	os.system('python3 ./scripts/generate.py {N} {L} {initial_speed}'.format(

@@ -2,16 +2,16 @@ function left(N, dt)
     disp(sprintf("./output/ex2/N=%d/left_dT=%s.txt", N, dt))
     fid = fopen(sprintf("./output/ex2/N=%d/left_dT=%s.txt", N, dt));
 
-    times = [];
+    t = [];
     left = [];
 
-    # Read file
+    % Read file
     while (!feof(fid))
-        # Parse time-left
+        % Parse time-left
         timeLeft = fgetl(fid);
         [timeT leftT] = strsplit(timeLeft(1:end), " "){1,:};
         timeT
-        times = [times, str2num(timeT)];
+        t = [t, str2num(timeT)];
         left = [left, str2num(leftT)];
     endwhile
 
@@ -20,7 +20,7 @@ function left(N, dt)
     hold off
 
     props = {"marker", '.', 'LineStyle', 'none'};
-    h = plot(times, left / N, sprintf(";dT = %s s;", dt));
+    h = plot(t, left / N, sprintf(";dT = %s s;", dt));
     set(h, props{:})
     xlabel("Tiempo [s]");
     ylabel("Fracción de partículas en el recinto izquierdo");
