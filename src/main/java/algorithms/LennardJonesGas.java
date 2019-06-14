@@ -31,11 +31,18 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class LennardJonesGas {
 
-	private static final double interactionRadius = 5;
+	// Box dimensions
 	private static final double boxHeight = 200;
 	private static final double boxWidth = 400;
 	private static final double centralHoleUnits = 10;
+
+	// Potential distance cut
+	private static final double interactionRadius = 5;
+
+	// Distance at minimum potential
 	private static final double RM = 1.0;
+
+	// Hole depth
 	private static final double e = 2.0;
 
 	// Initial State
@@ -50,9 +57,9 @@ public class LennardJonesGas {
 			BufferedWriter energyBuffer,
 			BufferedWriter leftBuffer,
 			double limitTime,
+			double limitFraction,
 			double dt,
 			double printDeltaT) throws IOException {
-
 //		Particle p1 = particles.get(0);
 //		Particle p2 = particles.get(1);
 //		p1.setPosition(new Vector2D(100, 196));
@@ -64,18 +71,25 @@ public class LennardJonesGas {
 //		test2particles.add(p2);
 //		particles = test2particles;
 
-		// Print first frame
-		printFrame(buffer, energyBuffer, leftBuffer, particles);
-
-		StabilizedBoxCriteria stabilizedBoxCriteria = new StabilizedBoxCriteria(0.5, boxWidth / 2);
-		Criteria timeCriteria = new TimeCriteria(limitTime);
+		// Run Lennard-Jones Gas by default with StabilizedBoxCriteria end criteria
+		Criteria endCriteria;
+		if (limitTime < 0) {
+			endCriteria = new StabilizedBoxCriteria(limitFraction, boxWidth / 2);
+		} else {
+			endCriteria = new TimeCriteria(limitTime);
+		}
 
 		// Print every 60 frames
 		int currentFrame = 1;
 		int printFrame = (int) Math.ceil(printDeltaT / dt);
 
-		while (!timeCriteria.isDone(particles, time)) {
-//		while (!stabilizedBoxCriteria.isDone(particles)) {
+		// Accumulate number of particles at left side of box for each time step
+		AtomicReference<Integer> leftParticles = new AtomicReference<>(0);
+
+		// Print first frame
+		printFrame(buffer, energyBuffer, leftBuffer, particles.size(), limitTime, particles);
+
+		while (!endCriteria.isDone(particles, time)) {
 			time += dt;
 
 			// Calculate neighbours
@@ -84,6 +98,7 @@ public class LennardJonesGas {
 					(int) Math.floor(Math.max(boxHeight, boxWidth) / interactionRadius),
 					interactionRadius);
 
+			// Add fake walls and calculate forces
 			particles.stream().parallel().forEach(p -> {
 				Set<Particle> neighboursCustom = new HashSet<>(p.getNeighbours());
 				addFakeWallParticles(p, neighboursCustom);
@@ -102,23 +117,35 @@ public class LennardJonesGas {
 
 						particleIntegrationMethods.put(p,
 								new VerletWithNeighbours(new Vector2D(posX, posY)));
+
+						// Remove neighbours
+						p.clearNeighbours();
+
+						// Calculate left particles
+						if (p.getPosition().getX() < boxWidth / 2)
+							leftParticles.accumulateAndGet(1, (x, y) -> x + y);
 					}
 				});
 			} else {
 				// Update position
 				particles.stream().parallel().forEach(p -> {
 					moveParticle(p, dt);
+
+					// Remove neighbours
 					p.clearNeighbours();
+
+					// Calculate left particles
+					if (p.getPosition().getX() < boxWidth / 2)
+						leftParticles.accumulateAndGet(1, (x, y) -> x + y);
 				});
 			}
 
 			if ((currentFrame % printFrame) == 0)
-				printFrame(buffer, energyBuffer, leftBuffer, particles);
+				printFrame(buffer, energyBuffer, leftBuffer, leftParticles.get(), limitTime, particles);
 
-//			System.out.println("Current progress: " + 100 * (time / limitTime));
 			currentFrame++;
+			leftParticles.set(0);
 		}
-
 	}
 
 	/**
@@ -261,6 +288,8 @@ public class LennardJonesGas {
 	private static void printFrame(BufferedWriter buffer,
 	                               BufferedWriter energyBuffer,
 	                               BufferedWriter leftBuffer,
+	                               Integer leftParticles,
+	                               double limitTime,
 	                               List<Particle> particles) throws IOException {
 		buffer.write(String.valueOf(particles.size()));
 		buffer.newLine();
@@ -270,10 +299,9 @@ public class LennardJonesGas {
 		buffer.newLine();
 
 		AtomicReference<Double> totalEnergy = new AtomicReference<>(0.0);
-		AtomicReference<Integer> leftParticles = new AtomicReference<>(0);
 
-		// Print remaining particles
-		particles.forEach(particle -> {
+		// Print particles
+		particles.parallelStream().forEach(particle -> {
 			try {
 				buffer.write(particleToString(particle));
 			} catch (IOException e1) {
@@ -281,11 +309,10 @@ public class LennardJonesGas {
 			}
 
 			totalEnergy.accumulateAndGet(particle.getPotentialEnergy() + particle.getKineticEnergy(), (x, y) -> x + y);
-
-			if (particle.getPosition().getX() < boxWidth / 2)
-				leftParticles.accumulateAndGet(1, (x, y) -> x + y);
 		});
 
+
+		// Print energies
 		try {
 			energyBuffer.write(String.valueOf(totalEnergy.get()));
 			energyBuffer.newLine();
@@ -293,14 +320,19 @@ public class LennardJonesGas {
 			e1.printStackTrace();
 		}
 
+		// Print left particles count and current time
 		try {
-			leftBuffer.write(time + " " + String.valueOf(leftParticles.get()));
+			leftBuffer.write(time + " " + String.valueOf(leftParticles));
 			leftBuffer.newLine();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
-		System.out.println("Left particles: " + String.valueOf(leftParticles.get()));
+		if (limitTime < 0) {
+			System.out.println("Left particles: " + String.valueOf(leftParticles));
+		} else {
+			System.out.println("Current progress: " + String.valueOf(new DecimalFormat("#.#").format(100 * (time / limitTime))));
+		}
 	}
 
 	private static String particleToString(Particle p) {
