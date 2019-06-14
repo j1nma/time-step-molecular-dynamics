@@ -32,6 +32,7 @@ class LennardJonesGasApp {
 		SimulationOptions options = parser.getOptions(SimulationOptions.class);
 		assert options != null;
 		if (options.limitTime <= 0
+				|| options.limitFraction <= 0
 				|| options.deltaT <= 0
 				|| options.printDeltaT <= 0
 				|| options.mass <= 0
@@ -46,9 +47,16 @@ class LennardJonesGasApp {
 		if (!staticAndDynamicParser.parse()) return;
 		List<Particle> particles = staticAndDynamicParser.getParticles();
 
+		// Run Lennard-Jones Gas by default with StabilizedBoxCriteria end criteria
+		if (!parser.containsExplicitOption("limitTime")) {
+			options.limitTime = -1;
+		}
+
 		// Create N output directory
 		String energyNDirectory = EX_2_DIRECTORY + "/N=" + particles.size();
 		new File(energyNDirectory).mkdirs();
+
+		// Adjust output files
 		OVITO_FILE = energyNDirectory + "/ovito_file";
 		ENERGY_FILE = energyNDirectory + "/energy";
 		LEFT_PARTICLES_FILE = energyNDirectory + "/left";
@@ -57,6 +65,7 @@ class LennardJonesGasApp {
 		runAlgorithm(
 				particles,
 				options.limitTime,
+				options.limitFraction,
 				options.deltaT,
 				options.printDeltaT
 		);
@@ -64,6 +73,7 @@ class LennardJonesGasApp {
 
 	private static void runAlgorithm(List<Particle> particles,
 	                                 double limitTime,
+	                                 double limitFraction,
 	                                 double deltaT,
 	                                 double printDeltaT) throws IOException {
 
@@ -82,6 +92,7 @@ class LennardJonesGasApp {
 				energyFileBuffer,
 				leftParticlesFileBuffer,
 				limitTime,
+				limitFraction,
 				deltaT,
 				printDeltaT
 		);
