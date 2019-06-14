@@ -2,28 +2,31 @@ function energy(N, dt)
     disp(sprintf("./output/ex2/N=%d/energy_dT=%s.txt", N, dt))
     fid = fopen(sprintf("./output/ex2/N=%d/energy_dT=%s.txt", N, dt));
 
+    t = [];
     energy = [];
-    # Read file
+
+    % Read file
     while (!feof(fid))
-        % Parse out energy
-        energy = [energy, str2num(fgetl(fid))];
+        % Parse time-energy
+        timeEnergy = fgetl(fid);
+        [timeT energyT] = strsplit(timeEnergy(1:end), " "){1,:};
+        t = [t, str2num(timeT)];
+        energy = [energy, str2num(energyT)];
     endwhile
 
     fclose(fid);
 
-    print_dt = 0.016666667;
-
     props = {"marker", '.', 'LineStyle', 'none'};
-    h = plot((1:size(energy, 2)) * print_dt, energy / energy(1), sprintf(";dT = %s s;", dt));
+    h = plot(t, energy / energy(1), sprintf(";dT = %s s;", dt));
     %set(h, props{:})
     xlabel("Tiempo [s]");
-    ylabel("Energía Total_{t} / Energía_{0} [J]");
     %xlim([0, 5])
+    ylabel("Energía Total_{t} / Energía_{0} [J]");
     legend("location", "eastoutside");
     grid on
 
-    mean(energy / energy(1))
-    std(energy / energy(1))
+    disp(sprintf("mean: %f", mean(energy / energy(1))))
+    disp(sprintf("std: %f", std(energy / energy(1))))
 
     hold all
 
