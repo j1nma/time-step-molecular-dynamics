@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Let the system evolve until the number of particles at both sides of the box is stabilized (fraction of particles).
  */
-public class StabilizedBoxCriteria {
+public class StabilizedBoxCriteria implements Criteria {
 
 	private final double fraction;
 	private final double halfBoxWidth;
@@ -15,12 +15,10 @@ public class StabilizedBoxCriteria {
 		this.halfBoxWidth = halfBoxWidth;
 	}
 
-	public boolean isDone(List<Particle> particles) {
+	@Override
+	public boolean isDone(List<Particle> particles, double time) {
 		double size = particles.size();
 		double lefts = particles.stream().filter(p -> p.getPosition().getX() < halfBoxWidth).count();
-		System.out.println("size: " + particles.size());
-		System.out.println("lefts: " + lefts);
-		System.out.println("frac: " + lefts / size);
 		return fraction > (lefts / size);
 	}
 }
