@@ -311,10 +311,9 @@ public class LennardJonesGas {
 			totalEnergy.accumulateAndGet(particle.getPotentialEnergy() + particle.getKineticEnergy(), (x, y) -> x + y);
 		});
 
-
 		// Print energies
 		try {
-			energyBuffer.write(String.valueOf(totalEnergy.get()));
+			energyBuffer.write(time + " " + String.valueOf(totalEnergy.get()));
 			energyBuffer.newLine();
 		} catch (IOException e1) {
 			e1.printStackTrace();
