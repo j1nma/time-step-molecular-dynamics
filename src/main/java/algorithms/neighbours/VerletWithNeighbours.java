@@ -14,10 +14,6 @@ public class VerletWithNeighbours implements IntegrationMethodWithNeighbours {
 	public void updatePosition(Particle particle, double dt) {
 		final Vector2D currentForce = particle.getForce();
 
-		if (currentForce.getX() > 1E7 || currentForce.getY() > 1E7) {
-			int a = 0;
-		}
-
 		final Vector2D predictedPosition = particle.getPosition()
 				.scalarMultiply(2)
 				.subtract(previousPosition)

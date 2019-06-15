@@ -76,10 +76,6 @@ public class Particle implements Cloneable {
 		return velocity;
 	}
 
-	public double getSpeed() {
-		return velocity.getNorm();
-	}
-
 	public void setVelocity(Vector2D velocity) {
 		this.velocity = velocity;
 	}

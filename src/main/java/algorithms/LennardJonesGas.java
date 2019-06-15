@@ -60,6 +60,7 @@ public class LennardJonesGas {
 			double limitFraction,
 			double dt,
 			double printDeltaT) throws IOException {
+
 //		Particle p1 = particles.get(0);
 //		Particle p2 = particles.get(1);
 //		p1.setPosition(new Vector2D(100, 196));
@@ -162,7 +163,7 @@ public class LennardJonesGas {
 
 			// Calculate force module
 			double fraction = RM / distance;
-			double force = (12 * e / RM) * (Math.pow(fraction, 13) - Math.pow(fraction, 7));
+			double Fn = (12 * e / RM) * (Math.pow(fraction, 13) - Math.pow(fraction, 7));
 
 			// Calculate x component of contact unit vector e
 			double Enx = (p2.getPosition().getX() - particle.getPosition().getX()) / distance;
@@ -170,8 +171,8 @@ public class LennardJonesGas {
 			// Calculate y component of contact unit vector e
 			double Eny = (p2.getPosition().getY() - particle.getPosition().getY()) / distance;
 
-			double Fx = -force * Enx;
-			double Fy = -force * Eny;
+			double Fx = -Fn * Enx;
+			double Fy = -Fn * Eny;
 
 			potentialEnergy.accumulateAndGet(calculatePotential(distance), (x, y) -> x + y);
 
