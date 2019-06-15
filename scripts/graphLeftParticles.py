@@ -26,9 +26,10 @@ L = 200
 initial_speed = 10
 
 limitTime = -1
-limitFraction = 0.56
+limitFraction = 0.50
 
 dt = 0.00125
+print_dt = 10.0
 
 times = 1
 
@@ -57,6 +58,7 @@ for k in arange(0, times):
 			'--dynamicFile={dynamicFile}'.format(dynamicFile = "./data/lennardJonesGas/Dynamic-N={N}.txt".format(N = N)),
 			'--staticFile={staticFile}'.format(staticFile = "./data/lennardJonesGas/Static-N={N}.txt".format(N = N)),
 			'--deltaT={deltaT}'.format(deltaT = dt),
+			'--printDeltaT={printDeltaT}'.format(printDeltaT = print_dt),
 			'--limitTime={limitTime}'.format(limitTime = limitTime),
 			'--limitFraction={limitFraction}'.format(limitFraction = limitFraction)]);
 		processes.append(p);

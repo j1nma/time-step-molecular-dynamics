@@ -5,8 +5,6 @@ from oct2py import octave
 octave.addpath('./scripts/')
 
 N = 1000
-dt = "0.00125"
-ratio = "0.75"
-initial_ratio = "0.33"
-func = 'speedsPDF(' + str(N) + ',\"' + str(dt) + '\",\"' + str(ratio) + '\",\"' + str(initial_ratio) + '\")';
+dt = 0.00125
+func = 'speedsPDF(' + str(N) + ',\"' + str(dt) + '\")';
 octave.eval(func);
