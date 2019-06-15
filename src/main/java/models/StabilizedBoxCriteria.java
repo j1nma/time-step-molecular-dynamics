@@ -19,6 +19,6 @@ public class StabilizedBoxCriteria implements Criteria {
 	public boolean isDone(List<Particle> particles, double time) {
 		double size = particles.size();
 		double lefts = particles.stream().filter(p -> p.getPosition().getX() < halfBoxWidth).count();
-		return fraction > (lefts / size);
+		return fraction >= (lefts / size);
 	}
 }

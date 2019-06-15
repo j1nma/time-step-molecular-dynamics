@@ -26,12 +26,12 @@ L = 200
 initial_speed = 10
 
 limitTime = -1
-limitFraction = 0.50
+limitFraction = 0.5
 
 dt = 0.00125
-print_dt = 10.0
+print_dt = 1.0
 
-times = 1
+processes = []
 
 if not graph:
 	os.system('mvn clean package')
@@ -48,24 +48,18 @@ if not graph:
 	 		initial_speed = initial_speed
 	 		));
 
-processes = []
+	p = subprocess.Popen(['java', '-jar', './target/time-step-molecular-dynamics-1.0-SNAPSHOT.jar',
+		'--lennardJonesGas=true',
+		'--dynamicFile={dynamicFile}'.format(dynamicFile = "./data/lennardJonesGas/Dynamic-N={N}.txt".format(N = N)),
+		'--staticFile={staticFile}'.format(staticFile = "./data/lennardJonesGas/Static-N={N}.txt".format(N = N)),
+		'--deltaT={deltaT}'.format(deltaT = dt),
+		'--printDeltaT={printDeltaT}'.format(printDeltaT = print_dt),
+		'--limitTime={limitTime}'.format(limitTime = limitTime),
+		'--limitFraction={limitFraction}'.format(limitFraction = limitFraction)]);
+	processes.append(p);
 
-# For each dt value
-for k in arange(0, times):
-	if not graph:
-		p = subprocess.Popen(['java', '-jar', './target/time-step-molecular-dynamics-1.0-SNAPSHOT.jar',
-			'--lennardJonesGas=true',
-			'--dynamicFile={dynamicFile}'.format(dynamicFile = "./data/lennardJonesGas/Dynamic-N={N}.txt".format(N = N)),
-			'--staticFile={staticFile}'.format(staticFile = "./data/lennardJonesGas/Static-N={N}.txt".format(N = N)),
-			'--deltaT={deltaT}'.format(deltaT = dt),
-			'--printDeltaT={printDeltaT}'.format(printDeltaT = print_dt),
-			'--limitTime={limitTime}'.format(limitTime = limitTime),
-			'--limitFraction={limitFraction}'.format(limitFraction = limitFraction)]);
-		processes.append(p);
-	else:
-		func = 'left(' + str(N) + ',\"' + str(dt) + '\")';
-		octave.eval(func);
-if not graph:
-    # Wait
-    for process in processes:
-        process.wait()
+	for process in processes:
+		process.wait()
+else:
+	func = 'left(' + str(N) + ',\"' + str(dt) + '\")';
+	octave.eval(func);
