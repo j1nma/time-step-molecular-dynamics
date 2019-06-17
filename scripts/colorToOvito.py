@@ -32,6 +32,7 @@ output.append(data[0].rstrip())
 del data[0]
 
 max_v = 0.0
+min_v = 100
 
 c = 0
 for line in data:
@@ -46,6 +47,8 @@ for line in data:
 	output.append(line)
 	if v > max_v:
 	    max_v = v
+	if v < min_v:
+		min_v = v
 	c = c + 1
 	if (c % N == 0) and (c != len(data)):
 		output.append(data[c].rstrip())
@@ -60,3 +63,4 @@ f.write("\n".join(output))
 f.close()
 fo.close()
 print('max speed: {max_v}'.format(max_v = max_v))
+print('min speed: {min_v}'.format(min_v = min_v))

@@ -21,7 +21,7 @@ graph = t_or_f(sys.argv[1])
 
 octave.addpath('./scripts/')
 
-N = 1000
+N = 100
 L = 200
 initial_speed = 10
 

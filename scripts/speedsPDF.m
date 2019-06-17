@@ -1,6 +1,8 @@
 function speedsPDF(N, dt)
 
 	bin_value = 0.15
+	max_density_for_plot = 0.16
+	max_x_for_plot = 35
     
     % First third distribution
     disp(sprintf("./output/ex2/N=%d/speeds_file_first_third_dT=%s.txt", N, dt))
@@ -15,7 +17,7 @@ function speedsPDF(N, dt)
 	bar(xx, nn ./ (count * (xx(2) - xx(1))));
 	xlabel("Módulo de velocidad [m/s]");
 	ylabel("Densidad de probabilidad");
-	axis([0 maxSpeed])
+	axis([0 max_x_for_plot 0 max_density_for_plot])
 	grid on
 	print(sprintf("%s/N=%d/PDF-speeds-first-third.png", './output/ex2', N), "-dpngcairo", "-F:14")
 
@@ -33,7 +35,7 @@ function speedsPDF(N, dt)
 	bar(xx2, nn2 ./ (count2 * (xx2(2) - xx2(1))));
 	xlabel("Módulo de velocidad [m/s]");
 	ylabel("Densidad de probabilidad");
-	axis([0 maxSpeed2])
+	axis([0 max_x_for_plot 0 max_density_for_plot])
 	grid on
 	print(sprintf("%s/N=%d/PDF-speeds-last.png", './output/ex2', N), "-dpngcairo", "-F:14")
 
@@ -51,7 +53,7 @@ function speedsPDF(N, dt)
 	bar(xx3, nn3 ./ (count3 * (xx3(2) - xx3(1))));
 	xlabel("Módulo de velocidad [m/s]");
 	ylabel("Densidad de probabilidad");
-	axis([0 maxSpeed3])
+	axis([0 max_x_for_plot 0 max_density_for_plot])
 	grid on
 	print(sprintf("%s/N=%d/PDF-speeds-second-third.png", './output/ex2', N), "-dpngcairo", "-F:14")
 end
