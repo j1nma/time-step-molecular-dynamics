@@ -1,15 +1,17 @@
 package algorithms;
 
+import models.Force;
+
 /**
  * @see "teorica4 diapo 21 y 22"
  * @see "https://slideplayer.com/slide/11345253/ diapo 26"
  * @see "https://www.slideshare.net/keerthanpg/integration-schemes-in-molecular-dynamics CLAVEEEEEE"
  */
-public class Order5GearPredictorCorrector {
+public class Order5GearPredictorCorrector implements IntegrationMethod {
 
-	private double mass;
+	private final double mass;
 	private double r, r1, r2, r3, r4, r5;
-	private Force force;
+	private final Force force;
 
 	public Order5GearPredictorCorrector(double mass,
 	                                    double initialPosition,
@@ -25,7 +27,7 @@ public class Order5GearPredictorCorrector {
 		this.r5 = force.F(r3, r4) / mass;
 	}
 
-	double updatePosition(double dt) {
+	public double updatePosition(double dt) {
 
 		// Predict
 		double rp, rp1, rp2, rp3, rp4, rp5;

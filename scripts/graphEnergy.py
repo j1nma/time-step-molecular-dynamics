@@ -9,4 +9,8 @@ from numpy import zeros
 from oct2py import octave
 octave.addpath('./scripts/')
 
-octave.eval("collisionPDF");
+N = 100
+dT = "1.0E-3"
+dT = "0.0025"
+func = 'energy(' + str(N) + ',\"' + dT + '\")';
+octave.eval(func);

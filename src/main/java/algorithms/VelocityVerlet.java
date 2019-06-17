@@ -1,11 +1,13 @@
 package algorithms;
 
-public class VelocityVerlet {
+import models.Force;
 
-	private double mass;
+public class VelocityVerlet implements IntegrationMethod {
+
+	private final double mass;
 	private double currentPosition;
 	private double currentVelocity;
-	private Force force;
+	private final Force force;
 
 	public VelocityVerlet(double mass,
 	                      double initialPosition,
@@ -17,7 +19,7 @@ public class VelocityVerlet {
 		this.force = force;
 	}
 
-	double updatePosition(double dt) {
+	public double updatePosition(double dt) {
 		double currentAcceleration = force.F(currentPosition, currentVelocity) / mass;
 
 		double halfStepVelocity = currentVelocity + currentAcceleration * (dt / 2.0);

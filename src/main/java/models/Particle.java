@@ -9,35 +9,30 @@ import java.util.Set;
 public class Particle implements Cloneable {
 
 	private final int id;
+	private final double mass;
+	private double potentialEnergy;
 	private Vector2D position;
 	private Vector2D velocity;
-	private double radius;
-	private double mass;
+	private Vector2D force;
 	private Set<Particle> neighbours;
 
-	public Particle(int id, double radius, double mass) {
+	public Particle(int id, double mass) {
 		this.id = id;
-		this.radius = radius;
 		this.mass = mass;
 		this.neighbours = new HashSet<>();
 	}
 
-	/**
-	 * The distance between points contemplates border-to-border distance.
-	 * That is why the radii are subtracted.
-	 */
 	public double getDistanceBetween(Particle particle) {
 		Vector2D particlePosition = particle.getPosition();
-		return Math.sqrt(Math.pow(position.getX() - particlePosition.getX(), 2) +
-				Math.pow(position.getY() - particlePosition.getY(), 2))
-				- radius - particle.getRadius();
+		return Math.sqrt(Math.pow(position.getX() - particlePosition.getX(), 2)
+				+ Math.pow(position.getY() - particlePosition.getY(), 2));
 	}
 
 	public void addNeighbour(Particle neighbour) {
 		this.neighbours.add(neighbour);
 	}
 
-	private double getKineticEnergy() {
+	public double getKineticEnergy() {
 		return 0.5 * mass * velocity.getNormSq();
 	}
 
@@ -62,7 +57,6 @@ public class Particle implements Cloneable {
 				+ df.format(velocity.getX()) + " "
 				+ df.format(velocity.getY()) + " "
 				+ mass + " "
-				+ radius
 				+ df.format(getKineticEnergy()) + " ";
 	}
 
@@ -82,16 +76,8 @@ public class Particle implements Cloneable {
 		return velocity;
 	}
 
-	public double getSpeed() {
-		return velocity.getNorm();
-	}
-
 	public void setVelocity(Vector2D velocity) {
 		this.velocity = velocity;
-	}
-
-	public double getRadius() {
-		return radius;
 	}
 
 	public double getMass() {
@@ -100,5 +86,25 @@ public class Particle implements Cloneable {
 
 	public Set<Particle> getNeighbours() {
 		return neighbours;
+	}
+
+	public void clearNeighbours() {
+		this.neighbours = new HashSet<>();
+	}
+
+	public Vector2D getForce() {
+		return force;
+	}
+
+	public void setForce(Vector2D force) {
+		this.force = force;
+	}
+
+	public double getPotentialEnergy() {
+		return potentialEnergy;
+	}
+
+	public void setPotentialEnergy(double potentialEnergy) {
+		this.potentialEnergy = potentialEnergy;
 	}
 }

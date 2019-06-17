@@ -53,6 +53,15 @@ public class SimulationOptions extends OptionsBase {
 	public double limitTime;
 
 	@Option(
+			name = "limitFraction",
+			abbrev = 'f',
+			help = "Limit fraction of pedestrian at left box.",
+			category = "startup",
+			defaultValue = "0.56"
+	)
+	public double limitFraction;
+
+	@Option(
 			name = "deltaT",
 			abbrev = 't',
 			help = "Simulation delta time (s).",
@@ -66,7 +75,7 @@ public class SimulationOptions extends OptionsBase {
 			abbrev = 'p',
 			help = "Simulation print delta time (s).",
 			category = "startup",
-			defaultValue = "0.5"
+			defaultValue = "0.016666667"
 	)
 	public double printDeltaT;
 

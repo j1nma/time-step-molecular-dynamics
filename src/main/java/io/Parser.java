@@ -12,10 +12,10 @@ import java.util.*;
  */
 public class Parser {
 
-	private String staticFilePath;
-	private String dynamicFilePath;
+	private final String staticFilePath;
+	private final String dynamicFilePath;
 	private int numberOfParticles;
-	private Queue<Particle> particles;
+	private final Queue<Particle> particles;
 
 	public Parser(String staticFilePath, String dynamicFilePath) {
 		this.staticFilePath = staticFilePath;
@@ -38,9 +38,9 @@ public class Parser {
 		}
 		numberOfParticles = sc.nextInt();
 		for (int i = 0; i < numberOfParticles; i++) {
-			double radius = sc.nextDouble();
+			sc.nextDouble(); // ignore radius, since particles are punctual (r = 0)
 			double mass = sc.nextDouble();
-			particles.add(new Particle(i + 1, radius, mass));
+			particles.add(new Particle(i + 1, mass));
 		}
 		sc.close();
 		return true;

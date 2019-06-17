@@ -1,12 +1,14 @@
 package algorithms;
 
-public class Beeman {
+import models.Force;
 
-	private double mass;
+public class Beeman implements IntegrationMethod {
+
+	private final double mass;
 	private double currentPosition;
 	private double currentVelocity;
 	private double previousAcceleration;
-	private Force force;
+	private final Force force;
 
 	public Beeman(double mass,
 	              double initialPosition,
@@ -20,7 +22,7 @@ public class Beeman {
 		this.force = force;
 	}
 
-	double updatePosition(double dt) {
+	public double updatePosition(double dt) {
 		double currentAcceleration;
 		double nextPosition;
 		double nextVelocity;
